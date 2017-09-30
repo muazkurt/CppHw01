@@ -124,16 +124,12 @@ using namespace std;
 	int Left_Down(int ** board, int size, const int position[Y_X]);
 
 
-bool leftUp(const int ** board, const int position[Y_X]);
+	/*
+		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
+		Checks how much Left-up way stacked from last played player and returns the size of stack.
+	*/
+	int Left_Up(int ** board, int size, const int position[Y_X]);
 
-
-
-bool checkLeft(const int ** board, const int position[Y_X], int size);
-
-
-
-
-bool checkRight(const int ** board, const int position[Y_X], int size);
 
 bool WinSituation(const int ** board, int position[Y_X], int size);
 
@@ -157,6 +153,7 @@ int main(int argc, char * argv[])
 	freeint(board, size);
 	return 0;
 }
+
 
 
 
@@ -293,6 +290,120 @@ int main(int argc, char * argv[])
 		return board;
 	}
 
+
+	int Up_Down(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		bool Legal = true;
+		while(Legal == true 
+			&& position[0] + i < size)
+			{
+				if(board[position[0]][position[1]] != board[position[0] + i][position[1]])
+					Legal = false;
+				++i;
+			}
+		return i;
+	}
+
+	int Right_Down(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[0] == size - 1 || position[1] == size - 1);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true 
+				&& position[0] + i < size 
+				&& position[1] + i < size)
+				{
+					if(board[position[0]][position[1]] != board[position[0] + i][position[1] + i])
+						Legal = false;
+					else
+						++i;
+				}
+		}
+		return i;
+	}
+
+	int Right_Up(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[0] == 0 || position[1] == size - 1);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true 
+				&& position[0] - i >= 0
+				&& position[1] + i < size)
+				{
+					if(board[position[0]][position[1]] != board[position[0] - i][position[1] + i])
+						Legal = false;
+					else
+						++i;
+				}
+		}
+		return i;
+	}
+
+	int Left_Down(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[0] == size - 1 || position[1] == 0);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true 
+					&& position[0] + i < size
+					&& position[1] - i >= 0)
+				{
+					if(board[position[0]][position[1]] != board[position[0] + i][position[1] - i])
+						Legal = false;
+					else
+						++i;
+				}
+		}
+		return i;
+	}
+
+	int Left_Up(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[0] == 0 || position[1] == 0);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true 
+					&& position[0] - i >= 0
+					&& position[1] - i >= 0)
+				{
+					if(board[position[0]][position[1]] != board[position[0] - i][position[1] - i])
+						Legal = false;
+					else
+						++i;
+				}
+		}
+		return i;
+	}
+
+//
+
+
+bool WinSituation(const int ** board, int position[Y_X], int size)
+{
+    if(/*checkHorisontal(board, position, size) == true
+            || checkLeft(board, position, size) == true
+            || */checkRight(board, position, size) == true)
+        return true;
+    return false;
+}
+
+void freeint(int ** board, int size)
+{
+    for(int i = 0; i < size; ++i)
+        delete board[size];
+    delete[] board;
+}
+
 	bool IsCheckable(int ** board, int size, const int position[Y_X], int search_way)
 	{
 		bool Legal = false;
@@ -368,135 +479,3 @@ int main(int argc, char * argv[])
 		}
 		return Legal;
 	}
-
-	int Up_Down(int ** board, int size, const int position[Y_X])
-	{
-		int i = 1;
-		bool Legal = true;
-		while(Legal == true 
-			&& position[0] + i < size)
-			{
-				if(board[position[0]][position[1]] != board[position[0] + i][position[1]])
-					Legal = false;
-				++i;
-			}
-		return i;
-	}
-
-	int Right_Down(int ** board, int size, const int position[Y_X])
-	{
-		int i = 1;
-		bool Legal = true;
-		while(Legal == true 
-			&& position[0] + i < size - 1 
-			&& position[1] + i < size - 1)
-			{
-				if(board[position[0]][position[1]] != board[position[0] + i][position[1] + i])
-					Legal = false;
-				++i;
-			}
-		return i;
-	}
-
-	int Right_Up(int ** board, int size, const int position[Y_X])
-	{
-		int i = 0;
-		bool Legal = true;
-		while(Legal == true 
-			&& position[0] - i >= 0
-			&& position[1] + i < size - 1)
-			{
-				++i;
-				if(board[position[0]][position[1]] != board[position[0] - i][position[1] + i])
-					Legal = false;
-			}
-		return i;
-	}
-//
-
-
-int Left_Down(int ** board, int size, const int position[Y_X])
-{
-	int i = 1;
-	bool Legal = true;
-	while(Legal == true 
-		&& position[0] + i < size - 1
-		&& position[1] - i >= 0)
-		{
-			if(board[position[0]][position[1]] != board[position[0] + i][position[1] - i])
-				Legal = false;
-			++i;
-		}
-	return i;
-}
-
-
-bool leftUp(const int ** board, const int position[Y_X])
-{
-    bool Legal = false;
-    if(
-            (board[position[0]][position[1]] 
-            == board[position[0] - 1][position[1] - 1]) &&
-                (board[position[0] - 1][position[1] - 1]
-                == board[position[0] - 2][position[1] - 2]) &&
-                (board[position[0] - 2][position[1] - 2]
-                == board[position[0] - 3][position[1] - 3]))
-        Legal = true;
-    return Legal;
-}
-
-
-
-
-bool checkLeft(const int ** board, const int position[Y_X], int size)
-{
-    bool Legal = false;
-    if(IsCheckable(board, position, size, 3) == true)
-        Legal = leftUp(board, position);
-    if(Legal == false && IsCheckable(board, position, size, 4) == true)
-        Legal = leftDown(board, position);
-    return Legal;
-}
-
-
-bool RightUp(const int ** board, const int position[Y_X])
-{
-    bool Legal = false;
-    if(
-            (board[position[0]][position[1]] 
-            == board[position[0] - 1][position[1] + 1]) &&
-                (board[position[0] - 1][position[1] + 1]
-                == board[position[0] - 2][position[1] + 2]) &&
-                (board[position[0] - 2][position[1] + 2]
-                == board[position[0] - 3][position[1] + 3]))
-        Legal = true;
-    return Legal;
-}
-
-
-bool checkRight(const int ** board, const int position[Y_X], int size)
-{
-    bool Legal = false;
-    if(IsCheckable(board, position, size, 1) == true)
-        Legal = RightDown(board, position);
-    if(Legal == false && IsCheckable(board, position, size, 2) == true)
-        Legal = RightUp(board, position);
-    return Legal;
-}
-
-
-bool WinSituation(const int ** board, int position[Y_X], int size)
-{
-    if(/*checkHorisontal(board, position, size) == true
-            || checkLeft(board, position, size) == true
-            || */checkRight(board, position, size) == true)
-        return true;
-    return false;
-}
-
-void freeint(int ** board, int size)
-{
-    for(int i = 0; i < size; ++i)
-        delete board[size];
-    delete[] board;
-}
