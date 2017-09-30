@@ -87,6 +87,12 @@ using namespace std;
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X
 		and an int defines the searching way.
+		Searching way values can be:
+			0 -> Up to down
+			1 -> Right down
+			2 -> Right up
+			3 -> Left down
+			4 -> left Up
 		Searches if the game can be finished by the last move by the lines and returns a bool.
 	*/
 	bool IsCheckable(int ** board, int size, const int position[Y_X], int search_way);
@@ -98,22 +104,29 @@ using namespace std;
 	int Up_Down(int ** board, int size, const int position[Y_X]);
 
 	/*
-	Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-	Checks how much Right down way stacked from last played player and returns the size of stack.
+		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
+		Checks how much Right-down way stacked from last played player and returns the size of stack.
 	*/
 	int Right_Down(int ** board, int size, const int position[Y_X]);
 
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-		Checks how much Right up way stacked from last played player and returns the size of stack.
+		Checks how much Right-up way stacked from last played player and returns the size of stack.
 	*/
 	int Right_Up(int ** board, int size, const int position[Y_X]);
 
 
+	/*
+		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
+		Checks how much Left-down way stacked from last played player and returns the size of stack.
+	*/
+	int Left_Down(int ** board, int size, const int position[Y_X]);
+
+
 bool leftUp(const int ** board, const int position[Y_X]);
 
-bool leftDown(const int ** board, const int position[Y_X]);
+
 
 bool checkLeft(const int ** board, const int position[Y_X], int size);
 
@@ -402,6 +415,20 @@ int main(int argc, char * argv[])
 //
 
 
+int Left_Down(int ** board, int size, const int position[Y_X])
+{
+	int i = 1;
+	bool Legal = true;
+	while(Legal == true 
+		&& position[0] + i < size - 1
+		&& position[1] - i >= 0)
+		{
+			if(board[position[0]][position[1]] != board[position[0] + i][position[1] - i])
+				Legal = false;
+			++i;
+		}
+	return i;
+}
 
 
 bool leftUp(const int ** board, const int position[Y_X])
@@ -419,19 +446,6 @@ bool leftUp(const int ** board, const int position[Y_X])
 }
 
 
-bool leftDown(const int ** board, const int position[Y_X])
-{
-    bool Legal = false;
-    if(
-            (board[position[0]][position[1]] 
-            == board[position[0] + 1][position[1] - 1]) &&
-                (board[position[0] + 1][position[1] - 1]
-                == board[position[0] + 2][position[1] - 2]) &&
-                (board[position[0] + 2][position[1] - 2]
-                == board[position[0] + 3][position[1] - 3]))
-        Legal = true;
-    return Legal;
-}
 
 
 bool checkLeft(const int ** board, const int position[Y_X], int size)
