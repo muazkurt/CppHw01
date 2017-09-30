@@ -12,152 +12,172 @@
  */
 
 #include <iostream>
+#define Y_X 2
 using namespace std;
 
+//	Map creating functions
+	/*
+		Takes an (int **) and size to create,
+		Returns a square 2d array
+	*/
+	int ** Create_2d_Array(int ** input, int size);
+
+	/*
+		Takes (int **) and it' s created size,
+		fills it with 0s.
+	*/
+	int ** Fill_2d_with_0(int ** array, int size);
+
+	/*
+		The function that uses Create_2d_Array and Fill_2d_with_0
+		functions and return a useable square array.
+	*/
+	int ** Create_2d_Useable(int ** input, int size);
+
+//	Map printing functions
+	/*
+		Printing a string like header.
+		Takes an size input and prints letters from a until size.
+	*/
+	void printHead(int size);
+
+	/*
+		Prints given (int **) array.
+		Each line' s length will be given size.
+	*/
+	void printBody(int ** array_2d, int size);
+
+	/*
+		User function of printHead and printBody functions.
+	*/
+	void printMap(int ** array_2d, int size);
+
+//	Getting Input
+	/*
+		Using for ignoring case sensitivity.
+		takes an char and returns it as lowercase
+	*/
+	char CharLover(char x);
+
+	/*
+		Finding the first empty place in x position of array.
+		Takes an (int **) as 2d array, an x position and an int for length of array.
+		Returns the found empty place.
+	*/
+	int PositionY(int ** board, int size, int positionX);
+
+	/*
+		Takes a (int **) as 2d array and an int array sized 2 for updating coordinate,
+		and a int for size of 2d array.
+		In the function, user asked for an input in range of 'a', 'a'+(size) letter.
+		Then searches for empty place in 2d array' s input position by PositionY function.
+		Updates coordinate array and returns.
+	*/
+	int * getInput(int ** board, int size, int * coordinate);
+
+//	Making user move
+	/*
+		Takes 2d array as (int **), it' s size,
+		an int for user number, and a array sized 2 for taking Y_X coordinations.
+		Updates the map with taken argumants.
+	*/
+	int ** MakeMove(int ** board, int size, int user, int position[Y_X]);
+
+//	Search for winning situations.
+	/*
+		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X
+		and an int defines the searching way.
+		Searches if the game can be finished by the last move by the lines and returns a bool.
+	*/
+	bool IsCheckable(int ** board, int size, const int position[Y_X], int search_way);
+
+	/*
+		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
+		Checks how much stacked from last played player and returns the size of stack.
+	*/
+	int Up_Down(int ** board, int size, const int position[Y_X]);
+
+	/*
+	Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
+	Checks how much Right down way stacked from last played player and returns the size of stack.
+	*/
+	int Right_Down(int ** board, int size, const int position[Y_X]);
+
+
+	/*
+		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
+		Checks how much Right up way stacked from last played player and returns the size of stack.
+	*/
+	int Right_Up(int ** board, int size, const int position[Y_X]);
+
+
+bool leftUp(const int ** board, const int position[Y_X]);
+
+bool leftDown(const int ** board, const int position[Y_X]);
+
+bool checkLeft(const int ** board, const int position[Y_X], int size);
 
 
 
-int ** Createint(int ** board, int size);
 
-int ** FillEmpty(int ** board, int size);
+bool checkRight(const int ** board, const int position[Y_X], int size);
 
-int ** MakeBoard(int ** board, int size);
-
-char lover(char x);
-
-//Making Move
-int PositionY(const int ** board, int positionX, int size);
-
-int * getInput(const int ** board, int * position, int size);
-
-int ** MakeMove(int ** board, int user, const int position[2])
-
-//Printing int and componnents
-void printHead(int size);
-
-void printBody(const int ** printable, int size);
-
-void printint(const int ** printable, int size);
-
-bool IsCheckable(const int ** board, const int position[2], int size, int line);
-
-bool checkHorisontal(const int ** board, const int position[2], int size)
-
-bool leftUp(const int ** board, const int position[2])
-
-bool leftDown(const int ** board, const int position[2]);
-
-bool checkLeft(const int ** board, const int position[2], int size);
-
-bool RightUp(const int ** board, const int position[2]);
-
-bool RightDown(const int ** board, const int position[2]);
-
-bool checkRight(const int ** board, const int position[2], int size);
-
-bool WinSituation(const int ** board, int position[2], int size);
+bool WinSituation(const int ** board, int position[Y_X], int size);
 
 void freeint(int ** board, int size);
 
 int main(int argc, char * argv[])
 {
 	int ** board;
-        int size = 0;
-        if(argc > 1)
-            size = atoi(argv[1]);
-        size = 10;
-        board = MakeBoard(board, size);
-        int x[2];
+	int size = 0;
+	if(argc > 1)
+		size = atoi(argv[1]);
+	size = 10;
+	board = Create_2d_Useable(board, size);
+	int x[Y_X];
 	do {
-            printint((const int **)board, size);
-            getInput((const int **)board, x, size);
-            board = MakeMove(board, 1, x);
-            printint((const int **)board, size);
-        } while(WinSituation((const int **)board, x, size) == false);
-        freeint(board, size);
+		printint((const int **)board, size);
+		getInput((const int **)board, x, size);
+		board = MakeMove(board, 1, x);
+		printint((const int **)board, size);
+	} while(WinSituation((const int **)board, x, size) == false);
+	freeint(board, size);
 	return 0;
 }
 
 
 
-int ** Createint(int ** board, int size)
-{
-    board = new int*[size];
-    for(int i = 0; i < size; ++i)
-        board[i] = new int[size];
-    return board;
-}
 
 
-int ** FillEmpty(int ** board, int size)
-{
-    for(int i = 0; i < size; ++i)
-        for(int j = 0; j < size; ++j)
-            board[i][j] = 0;
-    return board;
-}
+//Works well
+	int ** Create_2d_Array(int ** input, int size)
+	{
+	    input = new int*[size];
+	    for(int i = 0; i < size; ++i)
+	        input[i] = new int[size];
+	    return input;
+	}
 
 
-int ** MakeBoard(int ** board, int size)
-{
-    board = Createint(board, size);
-    board = FillEmpty(board, size);
-    return board;
-}
+	int ** Fill_2d_with_0(int ** array, int size)
+	{
+	    for(int i = 0; i < size; ++i)
+	        for(int j = 0; j < size; ++j)
+	            array[i][j] = 0;
+	    return array;
+	}
 
 
-char lover(char x)
-{
-	if(x >= 'A' && x <= 'Z')
-		x -= ('A' - 'a');
-	return x;
-}
+	int ** Create_2d_Useable(int ** input, int size)
+	{
+	    input = Create_2d_Array(input, size);
+	    input = Fill_2d_with_0(input, size);
+	    return input;
+	}
 
 
-
-//Making Move
-int PositionY(const int ** board, int positionX, int size)
-{
-    int i = size - 1;
-    for(i; board[i][positionX] > 0 && i >= 0; --i);
-    return i;
-}
-
-int * getInput(const int ** board, int * position, int size)
-{
-    position[1] = -1;
-    do{
-        cout << "Please give me a character in range a - "
-		<< (char)('a' + size) << " to make your move: ";
-	char Input;
-	cin >> Input;
-	Input = lover(Input);
-	if(Input > 'a' + size || Input < 'a')
-		cout << "This is not legal." << endl;
-        else
-        {
-            position[1] = (Input - 'a');
-            position[0] = PositionY(board, position[1], size);
-        }
-        }while(position[1] == -1);
-    return position;
-}
-
-
-
-int ** MakeMove(int ** board, int user, const int position[2])
-{
-    if(user = 1)
-        board[position[0]][position[1]] = 1;
-    else
-        board[position[0]][position[1]] = 2;
-    return board;
-}
-
-
-//Printing int and componnents
-void printHead(int size)
-{
+	void printHead(int size)
+	{
 		char a = 'a';
 		for(int i = 0; i < size; ++i)
 		{
@@ -167,145 +187,224 @@ void printHead(int size)
 		}
 		cout << endl;
 		return;
-}
+	}
 
 
-void printBody(const int ** printable, int size)
-{
+	void printBody(int ** array_2d, int size)
+	{
 		for(int i = 0; i < size; ++i)
 		{
 			for(int j = 0; j < size; ++j)
 			{
-                switch(printable[i][j]) 
-                {
-                    case 1:
-                        cout << 'X';
-                        break;
-                    case 2:
-                        cout << 'O';
-                        break;
-                    default:
-                        cout << '-';
-                        break;
-                }
-                cout << ' ';
+				switch(array_2d[i][j]) 
+				{
+					case 1:
+						cout << 'X';
+						break;
+					case 2:
+						cout << 'O';
+						break;
+					default:
+						cout << '-';
+						break;
+				}
+				cout << ' ';
 			}
 			cout << endl;
 		}
 		return;
-}
+	}
 
 
-void printint(const int ** printable, int size)
-{
+	void printMap(int ** array_2d, int size)
+	{
 		printHead(size);
-		printBody(printable, size);
-                return;
-}
+		printBody(array_2d, size);
+		return;
+	}
 
 
-bool IsCheckable(const int ** board, const int position[2], int size, int line)
-{
-    bool Legal = false;
-    switch (line)
-    {
-        case 0:
-            if(size - 1 - position[0] > 2)
-                Legal = true;
-            break;
-        //for right-down
-        case 1:
-            if(size - 1 - position[0] > 3 || size - 1 - position[0] > 3);
-            {
-                int i = 0;
-                while(i != -1 && i < 3)
-                {
-                    if(board[position[1]][position[0]] > 0 &&
-                       board[position[1] + (i + 1)][position[0] + (i + 1)] > 0)
-                        ++i;
-                    else
-                        i = -1;
-                }
-                if (i < 3)
-                   Legal = true;
-            }
-            break;
-        //for right-up
-        case 2:
-            if(size - 1 - position[1] > 3);
-            {
-                int i = 0;
-                while(i != -1 && i < 3)
-                {
-                    if(board[position[1]][position[0]] > 0 &&
-                       board[position[1] - (i + 1)][position[0] + (i + 1)] > 0)
-                        ++i;
-                    else
-                        i = -1;
-                }
-                if (i < 3)
-                    Legal = true;
-            }
-            break;
-            
-        //For left-up
-        case 3:
-            if(position[1] > 2)
-            {
-                int i = 0;
-                while(i != -1 && i < 3)
-                {
-                    if(board[position[1]][position[0]] > 0 &&
-                       board[position[1] - (i + 1)][position[0] - (i + 1)] > 0)
-                        ++i;
-                    else
-                        i = -1;
-                }
-                if (i < 3)
-                    Legal = true;
-            }
-            break;
-        //for left-down
-        case 4:
-            if(position[1] > 2 && size -1 - position[0] > 3)
-            {
-                int i = 0;
-                while(i != -1 && i < 3)
-                {
-                    if(board[position[1]][position[0]] > 0&&
-                       board[position[1] - (i + 1)][position[0] - (i + 1)] > 3)
-                        ++i;
-                    else
-                        i = -1;
-                }
-                if (i < 3)
-                    Legal = true;
-            }
-            break;
-        default:
-            break;
-    }
-    return Legal;
-}
-
-bool checkHorisontal(const int ** board, const int position[2], int size)
-{
-    bool Legal = false;
-    if(IsCheckable(board, position, size, 0) == true)
-    {
-        int i = 0;
-        if ((board[position[0]][position[1]] == board[position[0] + 1][position[1]]) &&
-                (board[position[0] + 1][position[1]]
-                == board[position[0] + 2][position[1]]) &&
-                (board[position[0] + 2][position[1]]
-                == board[position[0] + 3][position[1]]))
-            Legal = true;
-    }
-    return Legal;
-}
+	char CharLover(char x)
+	{
+		if(x >= 'A' && x <= 'Z')
+			x -= ('A' - 'a');
+		return x;
+	}
 
 
-bool leftUp(const int ** board, const int position[2])
+	int PositionY(int ** board, int size, int positionX)
+	{
+		int i = size - 1;
+	    if(board[0][positionX] == 0)
+	    	for(i; board[i][positionX] > 0 && i >= 0; --i);
+	    else
+	    	i = -1;
+	    return i;
+	}
+
+
+	int * getInput(int ** board, int size, int * coordinate)
+	{
+		coordinate[1] = -1;
+	    do{
+	    	cout << "Please give me a character in range a - "
+				<< (char)('a' + (size - 1)) 
+				<< " to make your move: ";
+			char Input;
+			cin >> Input;
+			Input = CharLover(Input);
+			if(Input > 'a' + (size - 1) || Input < 'a')
+				cout << "This is not legal." << endl;
+	        else
+	        {
+	            coordinate[1] = (Input - 'a');
+	            coordinate[0] = PositionY(board, size, coordinate[1]);
+	            if(coordinate[0] == -1)
+            	{
+					cout << "This is not legal." << endl;
+					coordinate[1] = -1;
+            	}
+	        }
+	    } while(coordinate[1] == -1);
+	    return coordinate;
+	}
+	
+
+	int ** MakeMove(int ** board, int size, int user, int position[Y_X])
+	{
+		getInput(board, size, position);
+		if(user == 1)
+			board[position[0]][position[1]] = 1;
+		else
+			board[position[0]][position[1]] = 2;
+		return board;
+	}
+
+	bool IsCheckable(int ** board, int size, const int position[Y_X], int search_way)
+	{
+		bool Legal = false;
+		switch (search_way)
+		{
+			//Is that possible to finish Up to down way from my position.
+				case 0:
+					if(size - position[0] > 2)
+						Legal = true;
+					break;
+			//Is that possible to finish Right-Down way from my position.
+				case 1:
+					if((size - position[0] > 2) && (size - position[1] > 2))
+					{
+						int i = 1;
+						while(i < 4 && i > 0)
+						{
+							if(board[position[0] + i][position[1] + i] == 0)
+								i = -1;
+							++i;
+						}
+						if (i != 0)
+							Legal = true;
+					}
+					break;
+			//Is that possible to finish Right-Up way from my position.
+				case 2:
+					if((position[0] > 2) && (size - position[1] > 3))
+					{
+						int i = 1;
+						while(i < 4 && i > 0)
+						{
+							if(board[position[0] - i][position[1] + i] == 0)
+								i = -1;
+							++i;
+						}
+						if (i != 0)
+							Legal = true;
+					}
+					break;
+			//Is that possible to finish Left-Down way from my position.
+				case 3:
+					if((size - position[0] > 3) && (position[1] > 2))
+					{
+						int i = 1;
+						while(i < 4 && i > 0)
+						{
+							if(board[position[0] + i][position[1] - i] == 0)
+								i = -1;
+							++i;
+						}
+						if (i != 0)
+							Legal = true;
+					}
+					break;
+			//Is that possible to finish Left-Up way from my position.
+				case 4:
+					if((position[0] > 2) && (position[1] > 2))
+						{
+							int i = 1;
+							while(i < 4 && i > 0)
+							{
+								if(board[position[0] - i][position[1] - i] == 0)
+									i = -1;
+								++i;
+							}
+							if (i != 0)
+								Legal = true;
+						}
+						break;
+			default:
+				break;
+		}
+		return Legal;
+	}
+
+	int Up_Down(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		bool Legal = true;
+		while(Legal == true 
+			&& position[0] + i < size)
+			{
+				if(board[position[0]][position[1]] != board[position[0] + i][position[1]])
+					Legal = false;
+				++i;
+			}
+		return i;
+	}
+
+	int Right_Down(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		bool Legal = true;
+		while(Legal == true 
+			&& position[0] + i < size - 1 
+			&& position[1] + i < size - 1)
+			{
+				if(board[position[0]][position[1]] != board[position[0] + i][position[1] + i])
+					Legal = false;
+				++i;
+			}
+		return i;
+	}
+
+	int Right_Up(int ** board, int size, const int position[Y_X])
+	{
+		int i = 0;
+		bool Legal = true;
+		while(Legal == true 
+			&& position[0] - i >= 0
+			&& position[1] + i < size - 1)
+			{
+				++i;
+				if(board[position[0]][position[1]] != board[position[0] - i][position[1] + i])
+					Legal = false;
+			}
+		return i;
+	}
+//
+
+
+
+
+bool leftUp(const int ** board, const int position[Y_X])
 {
     bool Legal = false;
     if(
@@ -320,7 +419,7 @@ bool leftUp(const int ** board, const int position[2])
 }
 
 
-bool leftDown(const int ** board, const int position[2])
+bool leftDown(const int ** board, const int position[Y_X])
 {
     bool Legal = false;
     if(
@@ -335,7 +434,7 @@ bool leftDown(const int ** board, const int position[2])
 }
 
 
-bool checkLeft(const int ** board, const int position[2], int size)
+bool checkLeft(const int ** board, const int position[Y_X], int size)
 {
     bool Legal = false;
     if(IsCheckable(board, position, size, 3) == true)
@@ -346,7 +445,7 @@ bool checkLeft(const int ** board, const int position[2], int size)
 }
 
 
-bool RightUp(const int ** board, const int position[2])
+bool RightUp(const int ** board, const int position[Y_X])
 {
     bool Legal = false;
     if(
@@ -360,19 +459,8 @@ bool RightUp(const int ** board, const int position[2])
     return Legal;
 }
 
-bool RightDown(const int ** board, const int position[2])
-{
-    if((board[position[0]][position[1]] == board[position[0] + 1][position[1] + 1]) &&
-                (board[position[0] + 1][position[1] + 1]
-                == board[position[0] + 2][position[1] + 2]) &&
-                (board[position[0] + 2][position[1] + 2]
-                == board[position[0] +  3][position[1] + 3]))
-        return true;
-    return false;
-}
 
-
-bool checkRight(const int ** board, const int position[2], int size)
+bool checkRight(const int ** board, const int position[Y_X], int size)
 {
     bool Legal = false;
     if(IsCheckable(board, position, size, 1) == true)
@@ -383,7 +471,7 @@ bool checkRight(const int ** board, const int position[2], int size)
 }
 
 
-bool WinSituation(const int ** board, int position[2], int size)
+bool WinSituation(const int ** board, int position[Y_X], int size)
 {
     if(/*checkHorisontal(board, position, size) == true
             || checkLeft(board, position, size) == true
