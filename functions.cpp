@@ -419,7 +419,10 @@ int * Ai_input(int ** board, int size, int * position)
 				break;
 			//Playing randomise.
 			case 8:
-				position[1] = rand() % size;
+				int temp = rand() % size;
+				if(temp < 0)
+					temp *= -1;
+				position[1] = temp;
 				position[0] = PositionY(board, size, position[1]);
 				PositionFound = true;
 				break;

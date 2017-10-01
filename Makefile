@@ -1,7 +1,7 @@
-all: ConnectFour
+all: exe
 
-ConnectFour: main.o functions.o
-	g++ -o ConnectFour functions.o main.o
+exe: main.o functions.o
+	g++ -o exe functions.o main.o
 
 main.o: 
 	g++ -c main.cpp
@@ -10,4 +10,4 @@ functions.o: functions.cpp
 	g++ -c functions.cpp
 
 clean:
-	rm *.o ConnectFour
+	rm *.o exe
