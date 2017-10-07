@@ -17,26 +17,19 @@ int main(int argc, char * argv[])
 			<< "\texample: " << argv[0] << " 10" << endl;
 	else
 	{
-		int ** board;
-		int size = stoi(argv[1]);
+		game board;
+		Create_Game(board, 10, doesMultiplayer());
 		srand(time(NULL));
-		Create_2d_Useable(board, size);
-		int userCounter = 1, 
-			game_playing = doesMultiplayer(),
-			coordinate[Y_X];
 		do
 		{
-			userCounter %= 2;
-			printMap((const int **&)board, size);
-			if(game_playing == 1)
-				MakeMove(board, size, userCounter, coordinate, 1);
-			else
-				MakeMove(board, size, userCounter, coordinate);
-			++userCounter;
+			board.user %= 2;
+			printMap((const int **&)board.board, board.size);
+			MakeMove(board);
+			++board.user;
 		}
-		while(WinSituation(board, size, coordinate) == false);
-		printMap((const int **&)board, size);
-		free_square(board, size);
+		while(1);
+		printMap((const int **&)board.board, board.size);
+		free_square(board.board, board.size);
 	}
 	return 0;
 }

@@ -2,6 +2,10 @@
 #include <string>	//For string operations.
 #include <cstdlib>	//For malloc, rand and srand functions
 #include <ctime>	//For time function.
+#include <fstream>
+#define SAVE "save"
+#define LOAD "load"
+#define MEMORY "./game_memory/"
 #define Y_X 2		//Defining the size of coordinate.
 using namespace std;
 
@@ -33,6 +37,8 @@ using namespace std;
 		functions and return a useable square array.
 	*/
 	void Create_2d_Useable(int **& input, const int & size);
+
+	void Create_Game(game & board, int size, int ai = 0);
 
 //	Map printing functions
 	/*
@@ -71,7 +77,7 @@ using namespace std;
 		Takes an (int **) as 2d array, an x position and an int for length of array.
 		Returns the found empty place.
 	*/
-	int PositionY(int ** board, int size, int positionX);
+	int PositionY(const game & situation);
 
 	/*
 		Takes a (int **) as 2d array and an int array sized 2 for updating coordinate,
@@ -80,13 +86,13 @@ using namespace std;
 		Then searches for empty place in 2d array' s input position by PositionY function.
 		Updates coordinate array and returns.
 	*/
-	int * getInput(int ** board, int size, int * coordinate);
+	void getInput(game & onTarget);
 
 	/*
 		Takes 2d array as (int **), it's size, an (int *) includes the enimy' s last move.
 		Searches for possible moves and tries to win.
 	*/
-	int * Ai_input(int ** board, int size, int * position);
+	void Ai_input(int ** board, int size, int * position);
 
 //	Making user move
 	/*
@@ -95,7 +101,7 @@ using namespace std;
 		Updates the map with taken argumants.
 		If the last variable setted by user, then User 2 will be computer.
 	*/
-	int ** MakeMove(int ** board, int size, int user, int position[Y_X], int AI_Active = 0);
+	void MakeMove(game & onTarget);
 
 //	Search for winning situations.
 	/*
@@ -145,6 +151,29 @@ using namespace std;
 		If game finishes, then updates the map.
 	*/
 	bool WinSituation(int ** board, int size, int position[Y_X]);
+
+
+//	File operations.
+	int sizeFromFile(const string & input, int & size);
+
+	int AIformFile(const string & input, int & AI_Open);
+
+	int userFromFile(const string & input, int & user);
+
+	int lastPlayedPosition(const string & input, int * coordinate);
+
+	int Create_2d_Useable(const string & input, game & board);
+
+	void parseInput(const string & input, game area);
+
+	string fileInput(const string & filename, string & loaded);
+
+	void Int_2d_String(const game & input, string & output);
+
+	void Load(const string & filename,  game & output);
+
+	void Save(const string & filename, const game & input);
+
 
 //	Destroying allocated memory.
 	/*

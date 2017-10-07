@@ -1,5 +1,9 @@
 #include "./functions.h"
 
+
+
+
+
 //
 	void printHead(const int & size)
 	{
@@ -85,10 +89,11 @@
 	}
 
 
-	void Create_Game(game & board)
+	void Create_Game(game & board, int size, int ai)
 	{
-		Create_2d_Useable(board.board, board.size);
-		board.AI_Open = 0;
+		Create_2d_Useable(board.board, size);
+		board.size = size;
+		board.AI_Open = ai;
 		board.user = 1;
 		board.coordinate[0] = 0;
 		board.coordinate[1] = 0;
@@ -127,538 +132,657 @@
 			cin >> section;
 			CharLover(section);
 			if(section == 'p')
-				input = 1;
-			else if(section == 'c')
 				input = 2;
+			else if(section == 'c')
+				input = 1;
 			else
 				cout << "Please give another input" << endl
 					 << "Choice: ";
 		}
 		return input - 1;
 	}
-//
 
-int PositionY(const game & situation)
-{
-	int i = situation.size - 1;
-	if(situation.board[0][situation.coordinate[1]] == 0)
-		for(i; situation.board[i][situation.coordinate[1]] > 0 && i >= 0; --i);
-	else
-		i = -1;
-	return i;
-}
+	int PositionY(const game & situation)
+	{
+		int i = situation.size - 1;
+		if(situation.board[0][situation.coordinate[1]] == 0)
+			for(i; situation.board[i][situation.coordinate[1]] > 0 && i >= 0; --i);
+		else
+			i = -1;
+		return i;
+	}
 
 
-void getInput(game & onTarget)
-{
-	onTarget.coordinate[1] = -1;
-	do{
-		cout << "Please give me a character in range a - "
-			<< (char)('a' + (onTarget.size - 1)) 
-			<< " to make your move: ";
-		string Input;
-		cin >> Input;
-		stringLover(Input);
-		if(Input.size() == 1)
-		{
-			if(Input[0] > 'a' + (onTarget.size - 1) || Input[0] < 'a')
-				cout << "This is not legal." << endl;
-			else
+	void getInput(game & onTarget)
+	{
+		onTarget.coordinate[1] = -1;
+		do{
+			cout << "Please give me a character in range a - "
+				<< (char)('a' + (onTarget.size - 1)) 
+				<< " to make your move: ";
+			string Input;
+			cin >> Input;
+			stringLover(Input);
+			if(Input.size() == 1)
 			{
-				onTarget.coordinate[1] = (Input[0] - 'a');
-				onTarget.coordinate[0] = PositionY(onTarget);
-				if(onTarget.coordinate[0] == -1)
-				{
+				if(Input[0] > 'a' + (onTarget.size - 1) || Input[0] < 'a')
 					cout << "This is not legal." << endl;
-					onTarget.coordinate[1] = -1;
+				else
+				{
+					onTarget.coordinate[1] = (Input[0] - 'a');
+					onTarget.coordinate[0] = PositionY(onTarget);
+					if(onTarget.coordinate[0] == -1)
+					{
+						cout << "This is not legal." << endl;
+						onTarget.coordinate[1] = -1;
+					}
 				}
 			}
-		}
-		else if(SAVE == Input)
-		{
-			cin >> Input;
-			Input = MEMORY + Input;
-			Save(Input, onTarget);
-		}
-		else if(LOAD == Input)
-		{
-			cin >> Input;
-			Input = MEMORY + Input;
-			Load(Input, onTarget);
-		}
-	} while(onTarget.coordinate[1] == -1);
-	return;
-}
+			else if(SAVE == Input)
+			{
+				cin >> Input;
+				Input = MEMORY + Input;
+				Save(Input, onTarget);
+			}
+			else if(LOAD == Input)
+			{
+				cin >> Input;
+				Input = MEMORY + Input;
+				Load(Input, onTarget);
+			}
+			else
+				cout << "There is no such command" << endl;
+		} while(onTarget.coordinate[1] == -1);
+		return;
+	}
 
-
-
-int * Ai_input(int ** board, int size, int * position)
-{
-	cout << "Computer moving to: ";
-	int i = 0;
-	bool PositionFound = false;
-	while(PositionFound == false)
+//
+	void MakeMove(game & onTarget)
 	{
-		switch(i)
+		/*if(onTarget.user == 1)
+		{	
+			getInput(onTarget);
+		}
+		else
 		{
-			//Watch out for Up to down.
-			case 0:
-				if(Up_Down(board, size, (const int *) position) > 2 && position[0] > 0)
-					{
-						PositionFound = true;
-						--position[0];
-					}
-				break;
-			//	Watch out for right down + left up and if it is possible to win for user 1,
-			//		then breake it by putting right down position.
-			case 1:
-				if(position[0] == size - 1 || position[1] == size - 1);
-				else
-				{
-					int right_temp = Right_Down(board, size, (const int *) position);
-					if(right_temp + Left_Up(board, size, (const int *) position) - 1 > 2)
-					{
-						if(position[0] + right_temp < size && position[1] + right_temp < size)
-						if(PositionY(board, size, position[1] + right_temp) == (position[0] + right_temp))
-						{
-							position[0] += right_temp;
-							position[1] += right_temp;
-							PositionFound = true;
-						}
-					}
-				}
-				break;
-			//	Watch out for right up + left down and if it is possible to win for user 1,
-			//		then breake it by putting right up position.
-			case 2:
-				if(position[0] == 0 || position[1] == size - 1);
-				else
-				{
-					int right_temp = Right_Up(board, size, (const int *) position);
-					if(right_temp + Left_Down(board, size, (const int *) position) - 1 > 2)
-					{
-						if(position[0] - right_temp >= 0 && position[1] + right_temp < size)
-						if(PositionY(board, size, position[1] + right_temp) == (position[0] - right_temp))
-						{
-							position[0] -= right_temp;
-							position[1] += right_temp;
-							PositionFound = true;
-						}
-					}
-				}
-				break;
-			//	Watch out for left down + right up and if it is possible to win for user 1,
-			//		then breake it by putting left down position.
-			case 3:
-				if(position[0] == size - 1 || position[1] == 0);
-				else
-				{
-					int left_temp = Left_Down(board, size, (const int *) position);
-					if(left_temp + Right_Up(board, size, (const int *) position) - 1 > 2)
-					{
-						if(position[0] + left_temp < size && position[1] - left_temp >= 0)
-						if(PositionY(board, size, position[1] - left_temp) == (position[0] + left_temp))
-						{
-							position[0] += left_temp;
-							position[1] -= left_temp;
-							PositionFound = true;
-						}
-					}
-				}
-				break;
-			//	Watch out for left up + right down and if it is possible to win for user 1,
-			//		then breake it by putting left up position.
-			case 4:
-				if(position[0] == 0 || position[1] == 0);
-				else
-				{
-					int left_temp = Left_Up(board, size, (const int *)  position);
-					if(left_temp + Right_Down(board, size, (const int *)  position) - 1 > 2)
-					{
-						if(position[0] - left_temp >= 0 && position[1] - left_temp >= 0)
-						if(PositionY(board, size, position[1] - left_temp) == (position[0] + left_temp))
-						{
-							position[0] -= left_temp;
-							position[1] -= left_temp;
-							PositionFound = true;			
-						}
-					}
-				}
-				break;
+			//if(onTarget.AI_Open == 0);
+			//	Ai_input(onTarget.board, onTarget.size, onTarget.coordinate);
+			//else
+		}*/
+		getInput(onTarget);
+		onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = onTarget.user;
+		return;
+	}
+	
 
-			//	Watch out for right + left  and if it is possible to win for user 1,
-			//		then breake it by putting right position.
-			case 5:
-				if(position[1] == size - 1);
-				else
-				{
-					int right_temp = To_Right(board, size, (const int *)  position);
-					if(right_temp + To_Left(board, size, (const int *)  position) - 1 > 2)
-					{
-						if(position[1] + right_temp < size && position[0] == PositionY(board, size, position[1] + right_temp))
+//
+/*
+	void Ai_input(int ** board, int size, int * position)
+	{
+		cout << "Computer moving to: ";
+		int i = 0;
+		bool PositionFound = false;
+		while(PositionFound == false)
+		{
+			switch(i)
+			{
+				//Watch out for Up to down.
+				case 0:
+					if(Up_Down(board, size, (const int *) position) > 2 && position[0] > 0)
 						{
-							position[1] += right_temp;
-							position[0] = PositionY(board, size, position[1]);
-							PositionFound = true;			
+							PositionFound = true;
+							--position[0];
 						}
-					}
-				}
-				break;
-
-			//	Watch out for left + right and if it is possible to win for user 1,
-			//		then breake it by putting left position.
-			case 6:
-				if(position[1] == 0);
-				else
-				{
-					int left_temp = To_Left(board, size, (const int *)  position);
-					if(left_temp + To_Right(board, size, (const int *)  position) - 1 > 2)
+					break;
+				//	Watch out for right down + left up and if it is possible to win for user 1,
+				//		then breake it by putting right down position.
+				case 1:
+					if(position[0] == size - 1 || position[1] == size - 1);
+					else
 					{
-						if(position[1] - left_temp >= 0 && position[0] == PositionY(board, size, position[1] - left_temp))
+						int right_temp = Right_Down(board, size, (const int *) position);
+						if(right_temp + Left_Up(board, size, (const int *) position) - 1 > 2)
 						{
-							position[1] -= left_temp;
-							PositionFound = true;			
-						}
-					}
-				}
-				break;
-
-			//	Search that if there is a possible stack position in map for User 2 (AI) side.
-			case 7:
-				for(position[1] = 0, position[1] = PositionY(board, size, position[1]);
-					PositionFound == false && position[1] < size; 
-					++position[1], position[0] = PositionY(board, size, position[1]))
-				{
-					if(position[0] + 1 < size)
-					{
-						++position[0];
-						if(board[position[0]][position[1]] == 2)
-							if(Up_Down(board, size, (const int *) position) > 1)
+							if(position[0] + right_temp < size && position[1] + right_temp < size)
+							if(PositionY(board, size, position[1] + right_temp) == (position[0] + right_temp))
+							{
+								position[0] += right_temp;
+								position[1] += right_temp;
 								PositionFound = true;
-						--position[0];
-						// The way like '\' if i can check right down
+							}
+						}
+					}
+					break;
+				//	Watch out for right up + left down and if it is possible to win for user 1,
+				//		then breake it by putting right up position.
+				case 2:
+					if(position[0] == 0 || position[1] == size - 1);
+					else
+					{
+						int right_temp = Right_Up(board, size, (const int *) position);
+						if(right_temp + Left_Down(board, size, (const int *) position) - 1 > 2)
+						{
+							if(position[0] - right_temp >= 0 && position[1] + right_temp < size)
+							if(PositionY(board, size, position[1] + right_temp) == (position[0] - right_temp))
+							{
+								position[0] -= right_temp;
+								position[1] += right_temp;
+								PositionFound = true;
+							}
+						}
+					}
+					break;
+				//	Watch out for left down + right up and if it is possible to win for user 1,
+				//		then breake it by putting left down position.
+				case 3:
+					if(position[0] == size - 1 || position[1] == 0);
+					else
+					{
+						int left_temp = Left_Down(board, size, (const int *) position);
+						if(left_temp + Right_Up(board, size, (const int *) position) - 1 > 2)
+						{
+							if(position[0] + left_temp < size && position[1] - left_temp >= 0)
+							if(PositionY(board, size, position[1] - left_temp) == (position[0] + left_temp))
+							{
+								position[0] += left_temp;
+								position[1] -= left_temp;
+								PositionFound = true;
+							}
+						}
+					}
+					break;
+				//	Watch out for left up + right down and if it is possible to win for user 1,
+				//		then breake it by putting left up position.
+				case 4:
+					if(position[0] == 0 || position[1] == 0);
+					else
+					{
+						int left_temp = Left_Up(board, size, (const int *)  position);
+						if(left_temp + Right_Down(board, size, (const int *)  position) - 1 > 2)
+						{
+							if(position[0] - left_temp >= 0 && position[1] - left_temp >= 0)
+							if(PositionY(board, size, position[1] - left_temp) == (position[0] + left_temp))
+							{
+								position[0] -= left_temp;
+								position[1] -= left_temp;
+								PositionFound = true;			
+							}
+						}
+					}
+					break;
+
+				//	Watch out for right + left  and if it is possible to win for user 1,
+				//		then breake it by putting right position.
+				case 5:
+					if(position[1] == size - 1);
+					else
+					{
+						int right_temp = To_Right(board, size, (const int *)  position);
+						if(right_temp + To_Left(board, size, (const int *)  position) - 1 > 2)
+						{
+							if(position[1] + right_temp < size && position[0] == PositionY(board, size, position[1] + right_temp))
+							{
+								position[1] += right_temp;
+								position[0] = PositionY(board, size, position[1]);
+								PositionFound = true;			
+							}
+						}
+					}
+					break;
+
+				//	Watch out for left + right and if it is possible to win for user 1,
+				//		then breake it by putting left position.
+				case 6:
+					if(position[1] == 0);
+					else
+					{
+						int left_temp = To_Left(board, size, (const int *)  position);
+						if(left_temp + To_Right(board, size, (const int *)  position) - 1 > 2)
+						{
+							if(position[1] - left_temp >= 0 && position[0] == PositionY(board, size, position[1] - left_temp))
+							{
+								position[1] -= left_temp;
+								PositionFound = true;			
+							}
+						}
+					}
+					break;
+
+				//	Search that if there is a possible stack position in map for User 2 (AI) side.
+				case 7:
+					for(position[1] = 0, position[1] = PositionY(board, size, position[1]);
+						PositionFound == false && position[1] < size; 
+						++position[1], position[0] = PositionY(board, size, position[1]))
+					{
+						if(position[0] + 1 < size)
+						{
+							++position[0];
+							if(board[position[0]][position[1]] == 2)
+								if(Up_Down(board, size, (const int *) position) > 1)
+									PositionFound = true;
+							--position[0];
+							// The way like '\' if i can check right down
+							if(PositionFound == false && position[1] + 1 < size)
+							{
+								++position[0];
+								++position[1];
+								int right_temp = 0;
+								if(board[position[0]][position[1]] == 2)
+									right_temp = Right_Down(board, size, (const int *) position);
+								--position[1];
+								--position[0];
+								if(position[0] - 1 >= 0 && position[1] - 1 >= 0)
+								{
+									--position[0];
+									--position[1];
+									if(board[position[0]][position[1]] == 2)
+										right_temp += Left_Up(board, size, (const int *) position);
+									++position[1];
+									++position[0];
+								}
+								if(right_temp > 1)
+									PositionFound = true;
+							}
+							// The way like '/' if i can check left down
+							if(PositionFound == false && position[1] - 1 >= 0)
+							{
+								++position[0];
+								--position[1];
+								int left_temp = 0;
+								if(board[position[0]][position[1]] == 2)
+									left_temp = Left_Down(board, size, (const int *) position);
+								++position[1];
+								--position[0];
+								if(position[0] - 1 >= 0 && position[1] + 1 < size)
+								{
+									--position[0];
+									++position[1];
+									if(board[position[0]][position[1]] == 2)
+										left_temp += Right_Up(board, size, (const int *) position);
+									--position[1];
+									++position[0];
+								}
+								if(left_temp > 1)
+									PositionFound = true;
+							}
+						}
+						if(PositionFound == false && position[0] - 1 >= 0)
+						{
+							if(position[1] + 1 < size)
+							{
+								--position[0];
+								++position[1];
+								int right_temp = 0;
+								if(board[position[0]][position[1]] == 2)
+									right_temp = Right_Up(board, size, (const int *) position);
+								--position[1];
+								++position[0];
+								if(position[0] + 1 < size && position[1] - 1 >= 0)
+								{
+									++position[0];
+									--position[1];
+									if(board[position[0]][position[1]] == 2)
+										right_temp += Left_Down(board, size, (const int *) position);
+									++position[1];
+									--position[0];
+								}
+								if(right_temp > 1)
+									PositionFound = true;
+							}
+							if(position[1] - 1 >= 0)
+							{
+								--position[0];
+								--position[1];
+								int left_temp = 0;
+								if(board[position[0]][position[1]] == 2)
+									left_temp = Left_Up(board, size, (const int *) position);
+								++position[1];
+								++position[0];
+								if(position[0] + 1 < size && position[1] + 1 < size)
+								{
+									++position[0];
+									++position[1];
+									if(board[position[0]][position[1]] == 2)
+										left_temp += Right_Down(board, size, (const int *) position);
+									--position[1];
+									--position[0];
+								}
+								if(left_temp > 1)
+									PositionFound = true;
+							}
+						}
 						if(PositionFound == false && position[1] + 1 < size)
 						{
-							++position[0];
 							++position[1];
 							int right_temp = 0;
 							if(board[position[0]][position[1]] == 2)
-								right_temp = Right_Down(board, size, (const int *) position);
+								right_temp = To_Right(board, size, (const int *) position);
 							--position[1];
-							--position[0];
-							if(position[0] - 1 >= 0 && position[1] - 1 >= 0)
+							if(position[1] - 1 >= 0)
 							{
-								--position[0];
 								--position[1];
 								if(board[position[0]][position[1]] == 2)
-									right_temp += Left_Up(board, size, (const int *) position);
+									right_temp += To_Left(board, size, (const int *) position);
 								++position[1];
-								++position[0];
 							}
 							if(right_temp > 1)
 								PositionFound = true;
 						}
-						// The way like '/' if i can check left down
 						if(PositionFound == false && position[1] - 1 >= 0)
 						{
-							++position[0];
 							--position[1];
 							int left_temp = 0;
 							if(board[position[0]][position[1]] == 2)
-								left_temp = Left_Down(board, size, (const int *) position);
+								left_temp = To_Left(board, size, (const int *) position);
 							++position[1];
-							--position[0];
-							if(position[0] - 1 >= 0 && position[1] + 1 < size)
+							if(position[1] + 1 < size)
 							{
-								--position[0];
 								++position[1];
 								if(board[position[0]][position[1]] == 2)
-									left_temp += Right_Up(board, size, (const int *) position);
+									left_temp = To_Right(board, size, (const int *) position);
 								--position[1];
-								++position[0];
 							}
 							if(left_temp > 1)
 								PositionFound = true;
 						}
 					}
-					if(PositionFound == false && position[0] - 1 >= 0)
-					{
-						if(position[1] + 1 < size)
-						{
-							--position[0];
-							++position[1];
-							int right_temp = 0;
-							if(board[position[0]][position[1]] == 2)
-								right_temp = Right_Up(board, size, (const int *) position);
-							--position[1];
-							++position[0];
-							if(position[0] + 1 < size && position[1] - 1 >= 0)
-							{
-								++position[0];
-								--position[1];
-								if(board[position[0]][position[1]] == 2)
-									right_temp += Left_Down(board, size, (const int *) position);
-								++position[1];
-								--position[0];
-							}
-							if(right_temp > 1)
-								PositionFound = true;
-						}
-						if(position[1] - 1 >= 0)
-						{
-							--position[0];
-							--position[1];
-							int left_temp = 0;
-							if(board[position[0]][position[1]] == 2)
-								left_temp = Left_Up(board, size, (const int *) position);
-							++position[1];
-							++position[0];
-							if(position[0] + 1 < size && position[1] + 1 < size)
-							{
-								++position[0];
-								++position[1];
-								if(board[position[0]][position[1]] == 2)
-									left_temp += Right_Down(board, size, (const int *) position);
-								--position[1];
-								--position[0];
-							}
-							if(left_temp > 1)
-								PositionFound = true;
-						}
-					}
-					if(PositionFound == false && position[1] + 1 < size)
-					{
-						++position[1];
-						int right_temp = 0;
-						if(board[position[0]][position[1]] == 2)
-							right_temp = To_Right(board, size, (const int *) position);
-						--position[1];
-						if(position[1] - 1 >= 0)
-						{
-							--position[1];
-							if(board[position[0]][position[1]] == 2)
-								right_temp += To_Left(board, size, (const int *) position);
-							++position[1];
-						}
-						if(right_temp > 1)
-							PositionFound = true;
-					}
-					if(PositionFound == false && position[1] - 1 >= 0)
-					{
-						--position[1];
-						int left_temp = 0;
-						if(board[position[0]][position[1]] == 2)
-							left_temp = To_Left(board, size, (const int *) position);
-						++position[1];
-						if(position[1] + 1 < size)
-						{
-							++position[1];
-							if(board[position[0]][position[1]] == 2)
-								left_temp = To_Right(board, size, (const int *) position);
-							--position[1];
-						}
-						if(left_temp > 1)
-							PositionFound = true;
-					}
+					break;
+				//Playing randomise.
+				case 8:
+					int temp;
+					temp = rand() % size;
+					if(temp < 0)
+						temp *= -1;
+					position[1] = temp;
+					position[0] = PositionY(board, size, position[1]);
+					PositionFound = true;
+					break;
+				default:
+					break;
+			}
+			++i;
+		}
+		cout << "[" << position[0] << "," << position[1] << "]" << endl;
+		return;
+	}
+
+
+
+	int Up_Down(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		bool Legal = true;
+		while(Legal == true && position[0] + i < size)
+			{
+				if(board[position[0]][position[1]] != board[position[0] + i][position[1]])
+					Legal = false;
+				else
+					++i;
+			}
+		return i;
+	}
+
+	int Right_Down(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[0] == size - 1 || position[1] == size - 1);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true && position[0] + i < size && position[1] + i < size)
+				{
+					if(board[position[0]][position[1]] != board[position[0] + i][position[1] + i])
+						Legal = false;
+					else
+						++i;
 				}
-				break;
-			//Playing randomise.
-			case 8:
-				int temp;
-				temp = rand() % size;
-				if(temp < 0)
-					temp *= -1;
-				position[1] = temp;
-				position[0] = PositionY(board, size, position[1]);
-				PositionFound = true;
-				break;
-			default:
-				break;
+		}
+		return i;
+	}
+
+	int Right_Up(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[0] == 0 || position[1] == size - 1);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true && position[0] - i >= 0 && position[1] + i < size)
+				{
+					if(board[position[0]][position[1]] != board[position[0] - i][position[1] + i])
+						Legal = false;
+					else
+						++i;
+				}
+		}
+		return i;
+	}
+
+	int Left_Down(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[0] == size - 1 || position[1] == 0);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true && position[0] + i < size && position[1] - i >= 0)
+				{
+					if(board[position[0]][position[1]] != board[position[0] + i][position[1] - i])
+						Legal = false;
+					else
+						++i;
+				}
+		}
+		return i;
+	}
+
+	int Left_Up(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[0] == 0 || position[1] == 0);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true && position[0] - i >= 0 && position[1] - i >= 0)
+				{
+					if(board[position[0]][position[1]] != board[position[0] - i][position[1] - i])
+						Legal = false;
+					else
+						++i;
+				}
+		}
+		return i;
+	}
+
+	int To_Right(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[1] == size - 1);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true && position[1] + i < size)
+				{
+					if(board[position[0]][position[1]] != board[position[0]][position[1] + i])
+						Legal = false;
+					else
+						++i;
+				}
+		}
+		return i;
+	}
+
+	int To_Left(int ** board, int size, const int position[Y_X])
+	{
+		int i = 1;
+		if(position[1] == 0);
+		else
+		{
+			bool Legal = true;
+			while(Legal == true && position[1] - i >= 0)
+			{
+				if(board[position[0]][position[1]] != board[position[0]][position[1] - i])
+					Legal = false;
+				else
+					++i;
+			}
+		}
+		return i;
+	}
+
+	bool WinSituation(int ** board, int size, int position[Y_X])
+	{
+		int y = 0, x = 0, filler = board[position[0]][position[1]];
+		bool win = false;
+		if((y = Up_Down(board, size, position)) >= 4)
+		{
+			for(y -= 1; y > 0; --y)
+				board[position[0] + y][position[1]] = filler + 2;
+			win = true;
+		}
+		else if((y = Right_Down(board, size, position)) + (x = Left_Up(board, size, position)) - 1 >= 4)
+		{
+			for(y -= 1; y > 0; --y)
+				board[position[0] + y][position[1] + y] = filler + 2;
+			for(x -= 1; x > 0; --x)
+				board[position[0] - x][position[1] - x] = filler + 2;
+			win = true;
+		}
+		else if((y = Right_Up(board, size, position)) + (x = Left_Down(board, size, position)) - 1 >= 4) 
+		{
+			for(y -= 1; y > 0; --y)
+				board[position[0] - y][position[1] + y] = filler + 2;
+			for(x -= 1; x > 0; --x)
+				board[position[0] + x][position[1] - x] = filler + 2;
+			win = true;
+		}
+		else if((y = To_Left(board, size, position)) + (x = To_Right(board, size, position)) - 1 >= 4) 
+		{
+			for(y -= 1; y > 0; --y)
+				board[position[0]][position[1] - y] = filler + 2;
+			for(x -= 1; x > 0; --x)
+				board[position[0]][position[1] + x] = filler + 2;
+			win = true;
+		}
+		if(win == true)
+			board[position[0]][position[1]] = filler + 2;
+		return win;
+	}
+
+*/
+//
+
+
+
+//Working File input Output functions.
+	int sizeFromFile(const string & input, int & size)
+	{
+		int i = 0;
+		for(i = 0; input[i] != '/'; ++i)
+			size = size * 10 + (input[i] - '0');
+		return i;
+	}
+
+	int AIformFile(const string & input, int & AI_Open)
+	{
+		AI_Open = input[1] - '0';
+		return 1;
+	}
+
+	int userFromFile(const string & input, int & user)
+	{
+		user = input[1] - '0';
+		return 1;
+	}
+
+	int lastPlayedPosition(const string & input, int * coordinate)
+	{
+		int i = 0;
+		while(input[i] != ',')
+		{
+			coordinate[0] = coordinate[0] * 10 +(input[i] - '0');
+			++i;
 		}
 		++i;
-	}
-	cout << "[" << position[0] << "," << position[1] << "]" << endl;
-	return position;
-}
-
-int ** MakeMove(int ** board, int size, int user, int position[Y_X], int AI_Active)
-{
-	if(user == 1)
-	{	
-		getInput(board, size, position);
-		board[position[0]][position[1]] = 1;
-	}
-	else
-	{
-		if(AI_Active == 1)
-			position = Ai_input(board, size, position);
-		else
-			getInput(board, size, position);
-		board[position[0]][position[1]] = 2;
-	}
-	return board;
-}
-
-int Up_Down(int ** board, int size, const int position[Y_X])
-{
-	int i = 1;
-	bool Legal = true;
-	while(Legal == true && position[0] + i < size)
+		while(input[i] != '/')
 		{
-			if(board[position[0]][position[1]] != board[position[0] + i][position[1]])
-				Legal = false;
-			else
-				++i;
+			coordinate[1] = coordinate[1] * 10 +(input[i] - '0');
+			++i;
 		}
-	return i;
-}
+		return i;
+	}
 
-int Right_Down(int ** board, int size, const int position[Y_X])
-{
-	int i = 1;
-	if(position[0] == size - 1 || position[1] == size - 1);
-	else
+	int Create_2d_Useable(const string & input, game & board)
 	{
-		bool Legal = true;
-		while(Legal == true && position[0] + i < size && position[1] + i < size)
-			{
-				if(board[position[0]][position[1]] != board[position[0] + i][position[1] + i])
-					Legal = false;
-				else
-					++i;
-			}
+		Create_2d_Useable(board.board, board.size);
+		for(int j = 0; j < board.size; ++j)
+			for(int k = 0; k < board.size; ++k)
+				board.board[j][k] = input[k + j * board.size] - '0';
+		return board.size * board.size;
 	}
-	return i;
-}
 
-int Right_Up(int ** board, int size, const int position[Y_X])
-{
-	int i = 1;
-	if(position[0] == 0 || position[1] == size - 1);
-	else
+	void parseInput(const string & input, game area)
 	{
-		bool Legal = true;
-		while(Legal == true && position[0] - i >= 0 && position[1] + i < size)
-			{
-				if(board[position[0]][position[1]] != board[position[0] - i][position[1] + i])
-					Legal = false;
-				else
-					++i;
-			}
+		area.size = 0;
+		int position = 0;
+		position = sizeFromFile(input, area.size);
+		position += AIformFile(&input[position], area.AI_Open);
+		position += userFromFile(&input[position], area.user);
+		position += lastPlayedPosition(&input[position], area.coordinate);
+		position += Create_2d_Useable(&input[position], area);
+		return;
 	}
-	return i;
-}
 
-int Left_Down(int ** board, int size, const int position[Y_X])
-{
-	int i = 1;
-	if(position[0] == size - 1 || position[1] == 0);
-	else
+	string fileInput(const string & filename, string & loaded)
 	{
-		bool Legal = true;
-		while(Legal == true && position[0] + i < size && position[1] - i >= 0)
-			{
-				if(board[position[0]][position[1]] != board[position[0] + i][position[1] - i])
-					Legal = false;
-				else
-					++i;
-			}
+		ifstream input;
+		input.open(filename);
+		input >> loaded;
+		input.close();
+		return loaded;
 	}
-	return i;
-}
 
-int Left_Up(int ** board, int size, const int position[Y_X])
-{
-	int i = 1;
-	if(position[0] == 0 || position[1] == 0);
-	else
+	void Int_2d_String(const game & input, string & output)
 	{
-		bool Legal = true;
-		while(Legal == true && position[0] - i >= 0 && position[1] - i >= 0)
-			{
-				if(board[position[0]][position[1]] != board[position[0] - i][position[1] - i])
-					Legal = false;
-				else
-					++i;
-			}
+		output = to_string(input.size);
+		output += '/';
+		output += input.AI_Open + '0';
+		output += '/';
+		output += input.user + '0';
+		output += '/';
+		output += to_string(input.coordinate[0]);
+		output += ',';
+		output += to_string(input.coordinate[1]);
+		output += '/';
+		for(int i = 0; i < input.size; ++i)
+			for(int j = 0; j < input.size; ++j)
+				output += input.board[i][j] + '0';
+		return;
 	}
-	return i;
-}
 
-int To_Right(int ** board, int size, const int position[Y_X])
-{
-	int i = 1;
-	if(position[1] == size - 1);
-	else
+	void Load(const string & filename,  game & output)
 	{
-		bool Legal = true;
-		while(Legal == true && position[1] + i < size)
-			{
-				if(board[position[0]][position[1]] != board[position[0]][position[1] + i])
-					Legal = false;
-				else
-					++i;
-			}
+		string input;
+		input = fileInput(filename, input);
+		parseInput(input, output);
+		printMap((const int **&) output.board, output.size);
+		return;
 	}
-	return i;
-}
 
-int To_Left(int ** board, int size, const int position[Y_X])
-{
-	int i = 1;
-	if(position[1] == 0);
-	else
+	void Save(const string & filename, const game & input)
 	{
-		bool Legal = true;
-		while(Legal == true && position[1] - i >= 0)
-		{
-			if(board[position[0]][position[1]] != board[position[0]][position[1] - i])
-				Legal = false;
-			else
-				++i;
-		}
+		ofstream output;
+		output.open(filename);
+		string info;
+		Int_2d_String(input, info);
+		output << info;
+		output.close();
 	}
-	return i;
-}
 
-bool WinSituation(int ** board, int size, int position[Y_X])
-{
-	int y = 0, x = 0, filler = board[position[0]][position[1]];
-	bool win = false;
-	if((y = Up_Down(board, size, position)) >= 4)
-	{
-		for(y -= 1; y > 0; --y)
-			board[position[0] + y][position[1]] = filler + 2;
-		win = true;
-	}
-	else if((y = Right_Down(board, size, position)) + (x = Left_Up(board, size, position)) - 1 >= 4)
-	{
-		for(y -= 1; y > 0; --y)
-			board[position[0] + y][position[1] + y] = filler + 2;
-		for(x -= 1; x > 0; --x)
-			board[position[0] - x][position[1] - x] = filler + 2;
-		win = true;
-	}
-	else if((y = Right_Up(board, size, position)) + (x = Left_Down(board, size, position)) - 1 >= 4) 
-	{
-		for(y -= 1; y > 0; --y)
-			board[position[0] - y][position[1] + y] = filler + 2;
-		for(x -= 1; x > 0; --x)
-			board[position[0] + x][position[1] - x] = filler + 2;
-		win = true;
-	}
-	else if((y = To_Left(board, size, position)) + (x = To_Right(board, size, position)) - 1 >= 4) 
-	{
-		for(y -= 1; y > 0; --y)
-			board[position[0]][position[1] - y] = filler + 2;
-		for(x -= 1; x > 0; --x)
-			board[position[0]][position[1] + x] = filler + 2;
-		win = true;
-	}
-	if(win == true)
-		board[position[0]][position[1]] = filler + 2;
-	return win;
-}
+
+
+
+
 
 void free_square(int ** array, int size)
 {
