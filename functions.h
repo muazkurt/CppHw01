@@ -10,55 +10,47 @@ using namespace std;
 		Takes an (int **) and size to create,
 		Returns a square 2d array
 	*/
-	int ** Create_2d_Array(int ** input, int size);
+	void Create_2d_Array(int **& input, const int & size);
 
 	/*
 		Takes (int **) and it' s created size,
 		fills it with 0s.
 	*/
-	int ** Fill_2d_with_0(int ** array, int size);
+	void Fill_2d_with_0(int **& array, const int & size);
 
 	/*
 		The function that uses Create_2d_Array and Fill_2d_with_0
 		functions and return a useable square array.
 	*/
-	int ** Create_2d_Useable(int ** input, int size);
+	void Create_2d_Useable(int **& input, const int & size);
 
 //	Map printing functions
 	/*
 		Printing a string like header.
 		Takes an size input and prints letters from a until size.
 	*/
-	void printHead(int size);
+	void printHead(const int & size);
 
 	/*
 		Prints given (int **) array.
 		Each line' s length will be given size.
 	*/
-	void printBody(int ** array_2d, int size);
+	void printBody(const int **& array_2d, const int & size);
+
 
 	/*
 		User function of printHead and printBody functions.
 	*/
-	void printMap(int ** array_2d, int size);
+	void printMap(const int **& array_2d, int size);
 
 //	Getting Input
 	/*
 		Using for ignoring case sensitivity.
-		takes an char and returns it as lowercase
+		takes an char and updates it as lowercase.
+		Returns 1 if updated or 0 if didn't.
 	*/
-	char CharLover(char x);
-
-	/*
-		Using for ignoring case sensitivity in strings.
-		Takes an char * and returns it lowercase.
-	*/
-	char * stringLover(char * target_string);
-
-	/*
-		Takes a string as (char *) and returns it's size.
-	*/
-	int stringSize(const char * target_string);
+	int CharLover(char & letter);
+	
 	/*
 		Ask the user for User vs Coop or User vs User
 	*/

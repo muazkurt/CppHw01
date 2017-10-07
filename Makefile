@@ -1,13 +1,7 @@
 all: exe
 
-exe: main.o functions.o
-	g++ -o exe functions.o main.o
-
-main.o: 
-	g++ -c main.cpp
-
-functions.o: functions.cpp
-	g++ -c functions.cpp
+exe: main.cpp functions.cpp
+	g++ -std=c++11 main.cpp functions.cpp -o exe
 
 clean:
 	rm *.o exe

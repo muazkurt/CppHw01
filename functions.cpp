@@ -1,94 +1,100 @@
 #include "./functions.h"
 
-
-void printHead(const int & size)
-{
-	char a = 'a';
-	for(int i = 0; i < size; ++i)
+//
+	void printHead(const int & size)
 	{
-		cout << a++;
-		if(i != size - 1)
-			cout << '-';
-	}
-	cout << endl;
-	return;
-}
-
-
-void printBody(const int **& array_2d, const int & size)
-{
-	int won = 0;
-	for(int i = 0; i < size; ++i)
-	{
-		for(int j = 0; j < size; ++j)
+		char a = 'a';
+		for(int i = 0; i < size; ++i)
 		{
-			switch(array_2d[i][j]) 
-			{
-				case 1:
-					cout << 'X';
-					break;
-				case 2:
-					cout << 'O';
-					break;
-				case 3:
-					won = 1;
-					cout << 'x';
-					break;
-				case 4:
-					won = 2;
-					cout << 'o';
-					break;
-				default:
-					cout << '-';
-					break;
-			}
-			cout << ' ';
+			cout << a++;
+			if(i != size - 1)
+				cout << '-';
 		}
 		cout << endl;
+		return;
 	}
-	if(won > 0)
-		cout << "User " << won << " won!" << endl;
-	return;
-}
-
-void printMap(const int **& array_2d, int size)
-{
-	printHead(size);
-	printBody(array_2d, size);
-	return;
-}
 
 
-void Create_2d_Array(int **& input, const int & size)
-{
-	input = (int **)std::malloc(sizeof(int *) * size);
-	for(int i = 0; i < size; ++i)
-		input[i] = (int *)std::malloc(sizeof(int) * size);
-	return;
-}
+	void printBody(const int **& array_2d, const int & size)
+	{
+		int won = 0;
+		for(int i = 0; i < size; ++i)
+		{
+			for(int j = 0; j < size; ++j)
+			{
+				switch(array_2d[i][j]) 
+				{
+					case 1:
+						cout << 'X';
+						break;
+					case 2:
+						cout << 'O';
+						break;
+					case 3:
+						won = 1;
+						cout << 'x';
+						break;
+					case 4:
+						won = 2;
+						cout << 'o';
+						break;
+					default:
+						cout << '-';
+						break;
+				}
+				cout << ' ';
+			}
+			cout << endl;
+		}
+		if(won > 0)
+			cout << "User " << won << " won!" << endl;
+		return;
+	}
+
+	void printMap(const int **& array_2d, int size)
+	{
+		printHead(size);
+		printBody(array_2d, size);
+		return;
+	}
 
 
-void Fill_2d_with_0(int **& array, const int & size)
-{
-    for(int i = 0; i < size; ++i)
-        for(int j = 0; j < size; ++j)
-            array[i][j] = 0;
-    return;
-}
+	void Create_2d_Array(int **& input, const int & size)
+	{
+		input = (int **)std::malloc(sizeof(int *) * size);
+		for(int i = 0; i < size; ++i)
+			input[i] = (int *)std::malloc(sizeof(int) * size);
+		return;
+	}
 
 
-void Create_2d_Useable(int **& input, const int & size)
-{
-    Create_2d_Array(input, size);
-    Fill_2d_with_0(input, size);
-    return;
-}
-char CharLover(char x)
-{
-	if(x >= 'A' && x <= 'Z')
-		x -= ('A' - 'a');
-	return x;
-}
+	void Fill_2d_with_0(int **& array, const int & size)
+	{
+	    for(int i = 0; i < size; ++i)
+	        for(int j = 0; j < size; ++j)
+	            array[i][j] = 0;
+	    return;
+	}
+
+
+	void Create_2d_Useable(int **& input, const int & size)
+	{
+	    Create_2d_Array(input, size);
+	    Fill_2d_with_0(input, size);
+	    return;
+	}
+
+	int CharLover(char & letter)
+	{
+		int i = 0;
+		if(letter >= 'A' && letter <= 'Z')
+		{
+			letter -= ('A' - 'a');
+			++i;
+		}
+		return i;
+	}
+
 //
 int doesMultiplayer()
 {

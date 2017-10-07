@@ -20,14 +20,14 @@ int main(int argc, char * argv[])
 		int ** board;
 		int size = stoi(argv[1]);
 		srand(time(NULL));
-		board = Create_2d_Useable(board, size);
+		Create_2d_Useable(board, size);
 		int userCounter = 1, 
 			game_playing = doesMultiplayer(),
 			coordinate[Y_X];
 		do
 		{
 			userCounter %= 2;
-			printMap(board, size);
+			printMap((const int **&)board, size);
 			if(game_playing == 1)
 				MakeMove(board, size, userCounter, coordinate, 1);
 			else
@@ -35,7 +35,7 @@ int main(int argc, char * argv[])
 			++userCounter;
 		}
 		while(WinSituation(board, size, coordinate) == false);
-		printMap(board,size);
+		printMap((const int **&)board, size);
 		free_square(board, size);
 	}
 	return 0;
