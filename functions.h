@@ -5,6 +5,16 @@
 #define Y_X 2		//Defining the size of coordinate.
 using namespace std;
 
+//	Defining Struct for game.
+	typedef struct
+	{
+		int ** board;
+		int size;
+		int AI_Open;
+		int user;
+		int coordinate[Y_X];
+	} game;
+
 //	Map creating functions
 	/*
 		Takes an (int **) and size to create,

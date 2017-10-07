@@ -84,6 +84,17 @@
 	    return;
 	}
 
+
+	void Create_Game(game & board)
+	{
+		Create_2d_Useable(board.board, board.size);
+		board.AI_Open = 0;
+		board.user = 1;
+		board.coordinate[0] = 0;
+		board.coordinate[1] = 0;
+	}
+
+
 	int CharLover(char & letter)
 	{
 		int i = 0;
@@ -95,62 +106,91 @@
 		return i;
 	}
 
-//
-int doesMultiplayer()
-{
-	cout << "   ------------" << endl
-		<<  "1) User vs User" << endl
-		<<  "2) User vs Coop" << endl
-		<<  "Choice: ";
-	int input = 0;
-	while(input == 0)
+	int stringLover(string & traget)
 	{
-		cin >> input;
-		if(input > 2 || input < 0)
-		{
-			cout << "Please give another input in range of (1, 2)" << endl
-				 << "Choice: ";
-			input = 0;
-		}
+		int counter = 0;
+		for(int i = 0; traget[i] != 0; ++i)
+			counter += CharLover(traget[i]);
+		return counter;
 	}
-	return input - 1;
+
+	int doesMultiplayer()
+	{
+		cout << "   ------------" << endl
+			<<  "P) User vs User" << endl
+			<<  "C) User vs Coop" << endl
+			<<  "Choice: ";
+		int input = 0;
+		while(input == 0)
+		{
+			char section = 0;
+			cin >> section;
+			CharLover(section);
+			if(section == 'p')
+				input = 1;
+			else if(section == 'c')
+				input = 2;
+			else
+				cout << "Please give another input" << endl
+					 << "Choice: ";
+		}
+		return input - 1;
+	}
+//
+
+int PositionY(const game & situation)
+{
+	int i = situation.size - 1;
+	if(situation.board[0][situation.coordinate[1]] == 0)
+		for(i; situation.board[i][situation.coordinate[1]] > 0 && i >= 0; --i);
+	else
+		i = -1;
+	return i;
 }
 
-int PositionY(int ** board, int size, int positionX)
-{
-	int i = size - 1;
-    if(board[0][positionX] == 0)
-    	for(i; board[i][positionX] > 0 && i >= 0; --i);
-    else
-    	i = -1;
-    return i;
-}
 
-int * getInput(int ** board, int size, int * coordinate)
+void getInput(game & onTarget)
 {
-	coordinate[1] = -1;
-    do{
-    	cout << "Please give me a character in range a - "
-			<< (char)('a' + (size - 1)) 
+	onTarget.coordinate[1] = -1;
+	do{
+		cout << "Please give me a character in range a - "
+			<< (char)('a' + (onTarget.size - 1)) 
 			<< " to make your move: ";
-		char Input;
+		string Input;
 		cin >> Input;
-		Input = CharLover(Input);
-		if(Input > 'a' + (size - 1) || Input < 'a')
-			cout << "This is not legal." << endl;
-        else
-        {
-            coordinate[1] = (Input - 'a');
-            coordinate[0] = PositionY(board, size, coordinate[1]);
-            if(coordinate[0] == -1)
-        	{
+		stringLover(Input);
+		if(Input.size() == 1)
+		{
+			if(Input[0] > 'a' + (onTarget.size - 1) || Input[0] < 'a')
 				cout << "This is not legal." << endl;
-				coordinate[1] = -1;
-        	}
-        }
-    } while(coordinate[1] == -1);
-    return coordinate;
+			else
+			{
+				onTarget.coordinate[1] = (Input[0] - 'a');
+				onTarget.coordinate[0] = PositionY(onTarget);
+				if(onTarget.coordinate[0] == -1)
+				{
+					cout << "This is not legal." << endl;
+					onTarget.coordinate[1] = -1;
+				}
+			}
+		}
+		else if(SAVE == Input)
+		{
+			cin >> Input;
+			Input = MEMORY + Input;
+			Save(Input, onTarget);
+		}
+		else if(LOAD == Input)
+		{
+			cin >> Input;
+			Input = MEMORY + Input;
+			Load(Input, onTarget);
+		}
+	} while(onTarget.coordinate[1] == -1);
+	return;
 }
+
+
 
 int * Ai_input(int ** board, int size, int * position)
 {
