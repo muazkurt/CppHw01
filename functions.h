@@ -1,4 +1,5 @@
 #include <iostream> 
+#include <string>	//For string operations.
 #include <cstdlib>	//For malloc, rand and srand functions
 #include <ctime>	//For time function.
 #define Y_X 2		//Defining the size of coordinate.
@@ -48,6 +49,16 @@ using namespace std;
 	*/
 	char CharLover(char x);
 
+	/*
+		Using for ignoring case sensitivity in strings.
+		Takes an char * and returns it lowercase.
+	*/
+	char * stringLover(char * target_string);
+
+	/*
+		Takes a string as (char *) and returns it's size.
+	*/
+	int stringSize(const char * target_string);
 	/*
 		Ask the user for User vs Coop or User vs User
 	*/

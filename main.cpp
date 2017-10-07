@@ -18,7 +18,7 @@ int main(int argc, char * argv[])
 	else
 	{
 		int ** board;
-		int size = atoi(argv[1]);
+		int size = stoi(argv[1]);
 		srand(time(NULL));
 		board = Create_2d_Useable(board, size);
 		int userCounter = 1, 
