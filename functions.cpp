@@ -1,33 +1,7 @@
 #include "./functions.h"
 
 
-int ** Create_2d_Array(int ** input, int size)
-{
-	input = (int **)std::malloc(sizeof(int *) * size);
-	for(int i = 0; i < size; ++i)
-		input[i] = (int *)std::malloc(sizeof(int) * size);
-	return input;
-}
-
-
-int ** Fill_2d_with_0(int ** array, int size)
-{
-    for(int i = 0; i < size; ++i)
-        for(int j = 0; j < size; ++j)
-            array[i][j] = 0;
-    return array;
-}
-
-
-int ** Create_2d_Useable(int ** input, int size)
-{
-    input = Create_2d_Array(input, size);
-    input = Fill_2d_with_0(input, size);
-    return input;
-}
-
-
-void printHead(int size)
+void printHead(const int & size)
 {
 	char a = 'a';
 	for(int i = 0; i < size; ++i)
@@ -41,7 +15,7 @@ void printHead(int size)
 }
 
 
-void printBody(int ** array_2d, int size)
+void printBody(const int **& array_2d, const int & size)
 {
 	int won = 0;
 	for(int i = 0; i < size; ++i)
@@ -77,20 +51,45 @@ void printBody(int ** array_2d, int size)
 	return;
 }
 
-void printMap(int ** array_2d, int size)
+void printMap(const int **& array_2d, int size)
 {
 	printHead(size);
 	printBody(array_2d, size);
 	return;
 }
 
+
+void Create_2d_Array(int **& input, const int & size)
+{
+	input = (int **)std::malloc(sizeof(int *) * size);
+	for(int i = 0; i < size; ++i)
+		input[i] = (int *)std::malloc(sizeof(int) * size);
+	return;
+}
+
+
+void Fill_2d_with_0(int **& array, const int & size)
+{
+    for(int i = 0; i < size; ++i)
+        for(int j = 0; j < size; ++j)
+            array[i][j] = 0;
+    return;
+}
+
+
+void Create_2d_Useable(int **& input, const int & size)
+{
+    Create_2d_Array(input, size);
+    Fill_2d_with_0(input, size);
+    return;
+}
 char CharLover(char x)
 {
 	if(x >= 'A' && x <= 'Z')
 		x -= ('A' - 'a');
 	return x;
 }
-
+//
 int doesMultiplayer()
 {
 	cout << "   ------------" << endl
