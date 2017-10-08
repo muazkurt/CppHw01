@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
 			MakeMove(board);
 			++board.user;
 		}
-		while(1);
+		while(WinSituation(board) == false);
 		printMap((const int **&)board.board, board.size);
 		free_square(board.board, board.size);
 	}

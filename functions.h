@@ -95,7 +95,7 @@ using namespace std;
 		Takes 2d array as (int **), it's size, an (int *) includes the enimy' s last move.
 		Searches for possible moves and tries to win.
 	*/
-	void Ai_input(int ** board, int size, int * position);
+	void Ai_input(game & onTarget);
 
 //	Making user move
 	/*
@@ -111,49 +111,49 @@ using namespace std;
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much stacked from last played player and returns the size of stack.
 	*/
-	int Up_Down(game & input);
+	int Up_Down(const game & input);
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much Right down way stacked from last played player and returns the size of stack.
 	*/
-	int Right_Down(game & input);
+	int Right_Down(const game & input);
 
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much Right up way stacked from last played player and returns the size of stack.
 	*/
-	int Right_Up(game & input);
+	int Right_Up(const game & input);
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much Left-down way stacked from last played player and returns the size of stack.
 	*/
-	int Left_Down(game & input);
+	int Left_Down(const game & input);
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much Left-up way stacked from last played player and returns the size of stack.
 	*/
-	int Left_Up(game & input);
+	int Left_Up(const game & input);
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much right way stacked from last played player and returns the size of stack.
 	*/
-	int To_Right(game & input);
+	int To_Right(const game & input);
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much left way stacked from last played player and returns the size of stack.
 	*/
-	int To_Left(game & input);
+	int To_Left(const game & input);
 	
 	/*
 		Checks if game is finish or not.
 		If game finishes, then updates the map.
 	*/
-	bool WinSituation(int ** board, int size, int position[Y_X]);
+	bool WinSituation(const game & searchOn);
 
 
 //	File operations.
