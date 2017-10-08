@@ -5,7 +5,7 @@ auto returnInt() -> decltype (0)
 	auto input = 0;
 	cout << "Please give size of the game: ";
 	cin >> input;
-	while(input % 2 != 0)
+	while(input % 2 != 0 && input < 4)
 	{
 		cerr << "Please give another size: ";
 		cin >> input;
