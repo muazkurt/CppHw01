@@ -21,6 +21,12 @@ using namespace std;
 
 //	Map creating functions
 	/*
+		For only using auto obey.
+		Searches an int from cin.
+	*/
+	auto returnInt() -> decltype (0);
+
+	/*
 		Takes an (int **) and size to create,
 		Returns a square 2d array
 	*/

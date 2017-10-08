@@ -12,9 +12,9 @@
 int main(int argc, char * argv[])
 {
 	game board;
-	cout << "Please give size of the game: ";
-	cin >> board.size;
-	Create_Game(board, board.size, doesMultiplayer());
+	auto size_caster = 0;
+	size_caster = returnInt();
+	Create_Game(board, size_caster, doesMultiplayer());
 	srand(time(NULL));
 	do
 	{
