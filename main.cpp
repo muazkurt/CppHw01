@@ -11,25 +11,20 @@
 
 int main(int argc, char * argv[])
 {
-	if(argc <= 1)
-		cout << "Usage:" << endl << "\t"
-			<< argv[0] << " <size of the map>" << endl
-			<< "\texample: " << argv[0] << " 10" << endl;
-	else
+	game board;
+	cout << "Size? ";
+	cin >> board.size;
+	Create_Game(board, board.size, doesMultiplayer());
+	srand(time(NULL));
+	do
 	{
-		game board;
-		Create_Game(board, 10, doesMultiplayer());
-		srand(time(NULL));
-		do
-		{
-			board.user %= 2;
-			printMap((const int **&)board.board, board.size);
-			MakeMove(board);
-			++board.user;
-		}
-		while(WinSituation(board) == false);
-		printMap((const int **&)board.board, board.size);
-		free_square(board.board, board.size);
+		board.user %= 2;
+		MakeMove(board);
+		++board.user;
 	}
+	while(WinSituation(board) == false);
+	printMap((const int **&)board.board, board.size);
+	free_square(board.board, board.size);
+	
 	return 0;
 }

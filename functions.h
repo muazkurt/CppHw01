@@ -12,10 +12,10 @@ using namespace std;
 //	Defining Struct for game.
 	typedef struct
 	{
-		int ** board;
-		int size;
-		int AI_Open;
-		int user;
+		int ** board;			//	The array to game playing
+		int size;				//	Size of the array
+		int AI_Open;			//	Does AI setted or not? If equals 0, then AI plays.
+		int user;				//	Turn counter of the player.
 		int coordinate[Y_X];
 	} game;
 
@@ -39,7 +39,10 @@ using namespace std;
 	void Create_2d_Useable(int **& input, const int & size);
 
 	/*
-	
+		Takes game board, board's new size.
+		if didn't setted:
+			AI will be 0 and user will be 1 as default.
+		Creates a game struct.
 	*/
 	void Create_Game(game & board, int size, int ai = 0, int user = 1);
 
@@ -71,23 +74,33 @@ using namespace std;
 	int CharLover(char & letter);
 	
 	/*
+		Ignoring case sensitivity.
+		Takes a string and updates it with lowercase latters.
+		Returns the count of changed latter.
+	*/
+	int stringLover(string & traget);
+
+	/*
 		Ask the user for User vs Coop or User vs User
 	*/
 	int doesMultiplayer();
 
 	/*
-		Finding the first empty place in x position of array.
-		Takes an (int **) as 2d array, an x position and an int for length of array.
+		Finding the first empty place in x position of game board.
+		Searches on game board's coordinate part's 1 object.
 		Returns the found empty place.
 	*/
 	int PositionY(const game & situation);
 
 	/*
-		Takes a (int **) as 2d array and an int array sized 2 for updating coordinate,
-		and a int for size of 2d array.
-		In the function, user asked for an input in range of 'a', 'a'+(size) letter.
-		Then searches for empty place in 2d array' s input position by PositionY function.
-		Updates coordinate array and returns.
+		Takes game board address and searches for input.
+		Possible inputs are:
+			"load",
+			"save",
+			'a' to size of game counted other char.
+		Load and save takes a filename.
+		Opens and reads/writes it.
+		Load, updates the map as the file obey.
 	*/
 	void getInput(game & onTarget);
 
@@ -99,53 +112,53 @@ using namespace std;
 
 //	Making user move
 	/*
-		Takes 2d array as (int **), it' s size,
-		an int for user number, and a array sized 2 for taking Y_X coordinations.
+		Takes game board address. Gets input and updates thea game.
 		Updates the map with taken argumants.
-		If the last variable setted by user, then User 2 will be computer.
 	*/
 	void MakeMove(game & onTarget);
 
+
 //	Search for winning situations.
 	/*
-		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-		Checks how much stacked from last played player and returns the size of stack.
+		Takes the game board and checks how much up way stacked from last played position.
+		Returns the size of stack.
 	*/
 	int Up_Down(const game & input);
 
 	/*
-		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-		Checks how much Right down way stacked from last played player and returns the size of stack.
+		Takes the game board and checks how much Right down way stacked from last played position.
+		Returns the size of stack.
 	*/
 	int Right_Down(const game & input);
 
 
 	/*
-		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-		Checks how much Right up way stacked from last played player and returns the size of stack.
+		Takes the game board and checks how much Right up way stacked from last played position.
+		Returns the size of stack.
 	*/
 	int Right_Up(const game & input);
 
 	/*
-		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-		Checks how much Left-down way stacked from last played player and returns the size of stack.
+		Takes the game board and checks how much Left-down way stacked from last played position.
+		Returns the size of stack.
 	*/
 	int Left_Down(const game & input);
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-		Checks how much Left-up way stacked from last played player and returns the size of stack.
+		Checks how much Left-up way stacked from last played position.
+		Returns the size of stack.
 	*/
 	int Left_Up(const game & input);
 
 	/*
-		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-		Checks how much right way stacked from last played player and returns the size of stack.
+		Takes the game board and checks how much right way stacked from last played position.
+		Returns the size of stack.
 	*/
 	int To_Right(const game & input);
 
 	/*
-		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-		Checks how much left way stacked from last played player and returns the size of stack.
+		Takes the game board and checks how much left way stacked from last played position.
+		Returns the size of stack.
 	*/
 	int To_Left(const game & input);
 	
@@ -157,26 +170,52 @@ using namespace std;
 
 
 //	Load File.
-	int sizeFromFile(const string & input, int & size);
+	/*
+		Search the string until the given parameter.
+		Each object will a part of an int, until the paramater.
+		Returns the position of found parameter.
+	*/
+	int stringParser(const string & input, int & size, const char param = '/');
 
-	int AIformFile(const string & input, int & AI_Open);
-
-	int userFromFile(const string & input, int & user);
-
-	int lastPlayedPosition(const string & input, int * coordinate);
-
+	/*
+		Overloaded function for creating 2d useable.
+		Takes a line of int included in a string and a game board address.
+		updates the boards componnents with string.
+	*/
 	int Create_2d_Useable(const string & input, game & board);
 
+	/*
+		Takes a string with informations about game board. 
+		Info parsed with a paramater. Searches that parses and updates declared positions.
+	*/
 	void parseInput(const string & input, game & area);
 
+	/*
+		Takes a string as a filename.
+		Opens it and reads a line of information.
+		Updates loaded with this information.
+		Returns loaded.
+	*/
 	string fileInput(const string & filename, string & loaded);
 
+	/*
+		Takes a filename and game board.
+		Opens file, reads information and updates the game board.
+	*/
 	void Load(const string & filename, game & output);
 
 
 //	Save file.
+	/*
+		Takes a game board and parse it's componnents, then writes them to
+		output string.
+	*/
 	void Int_2d_String(const game & input, string & output);
 
+	/*
+		Takes a filename, opens it and writes the game board in
+		it as load function can read.
+	*/
 	void Save(const string & filename, const game & input);
 
 

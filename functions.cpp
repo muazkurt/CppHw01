@@ -150,57 +150,61 @@ void Create_Game(game & board, int size, int ai, int user)
 		return i;
 	}
 
-
-	void getInput(game & onTarget)
-	{
-		onTarget.coordinate[1] = -1;
-		do{
-			cout << "Please give me a character in range a - "
-				<< (char)('a' + (onTarget.size - 1)) 
-				<< " to make your move: ";
-			string Input;
-			cin >> Input;
-			stringLover(Input);
-			if(Input.size() == 1)
+void getInput(game & onTarget)
+{
+	onTarget.coordinate[1] = -1;
+	do{
+		cout << "Please give me a character in range a - "
+			<< (char)('a' + (onTarget.size - 1)) 
+			<< " to make your move: ";
+		string Input;
+		cin >> Input;
+		stringLover(Input);
+		if(Input.size() == 1)
+		{
+			if(Input[0] > 'a' + (onTarget.size - 1) || Input[0] < 'a')
+				cout << "This is not legal." << endl;
+			else
 			{
-				if(Input[0] > 'a' + (onTarget.size - 1) || Input[0] < 'a')
-					cout << "This is not legal." << endl;
-				else
+				onTarget.coordinate[1] = (Input[0] - 'a');
+				onTarget.coordinate[0] = PositionY(onTarget);
+				if(onTarget.coordinate[0] == -1)
 				{
-					onTarget.coordinate[1] = (Input[0] - 'a');
-					onTarget.coordinate[0] = PositionY(onTarget);
-					if(onTarget.coordinate[0] == -1)
-					{
-						cout << "This is not legal." << endl;
-						onTarget.coordinate[1] = -1;
-					}
+					cout << "This is not legal." << endl;
+					onTarget.coordinate[1] = -1;
 				}
 			}
-			else if(SAVE == Input)
-			{
-				cin >> Input;
-				Input = MEMORY + Input;
-				Save(Input, onTarget);
-			}
-			else if(LOAD == Input)
-			{
-				cin >> Input;
-				Input = MEMORY + Input;
-				Load(Input, onTarget);
-			}
-			else
-				cout << "There is no such command" << endl; 
-		} while(onTarget.coordinate[1] == -1);
-		return;
-	}
+		}
+		else if(SAVE == Input)
+		{
+			cin >> Input;
+			Input = MEMORY + Input;
+			Save(Input, onTarget);
+		}
+		else if(LOAD == Input)
+		{
+			cin >> Input;
+			Input = MEMORY + Input;
+			Load(Input, onTarget);
+		}
+	} while(onTarget.coordinate[1] == -1);
+	return;
+}
 
+
+
+//
 
 	void MakeMove(game & onTarget)
 	{
+		printMap((const int **&)onTarget.board, onTarget.size);
 		if(onTarget.user == 1)
 		{	
 			getInput(onTarget);
-			onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = 1;
+			if(onTarget.user == 1)
+				onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = 1;
+			else
+				onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = 2;
 		}
 		else
 		{
@@ -208,7 +212,10 @@ void Create_Game(game & board, int size, int ai, int user)
 				Ai_input(onTarget);
 			else
 				getInput(onTarget);
-			onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = 2;
+			if(onTarget.user == 1)
+				onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = 1;
+			else
+				onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = 2;
 		}
 		return;
 	}
@@ -517,7 +524,10 @@ void Create_Game(game & board, int size, int ai, int user)
 						temp *= -1;
 					onTarget.coordinate[1] = temp;
 					onTarget.coordinate[0] = PositionY(onTarget);
-					PositionFound = true;
+					if(onTarget.coordinate[0] < 0)
+						--i;
+					else
+						PositionFound = true;
 					break;
 				default:
 					break;
@@ -715,46 +725,17 @@ void Create_Game(game & board, int size, int ai, int user)
 
 
 //Working File input Output functions.
-	int sizeFromFile(const string & input, int & size)
+	int stringParser(const string & input, int & size, const char param)
 	{
 		int i = 0;
-		for(i = 0; input[i] != '/'; ++i)
+		for(i = 0; input[i] != param; ++i)
 			size = size * 10 + (input[i] - '0');
-		return i;
-	}
-
-	int AIformFile(const string & input, int & AI_Open)
-	{
-		AI_Open = input[1] - '0';
-		return 1;
-	}
-
-	int userFromFile(const string & input, int & user)
-	{
-		user = input[1] - '0';
-		return 1;
-	}
-
-	int lastPlayedPosition(const string & input, int * coordinate)
-	{
-		int i = 0;
-		while(input[i] != ',')
-		{
-			coordinate[0] = coordinate[0] * 10 +(input[i] - '0');
-			++i;
-		}
-		++i;
-		while(input[i] != '/')
-		{
-			coordinate[1] = coordinate[1] * 10 +(input[i] - '0');
-			++i;
-		}
-		return i;
+		return i + 1;
 	}
 
 	int Create_2d_Useable(const string & input, game & board)
 	{
-		Create_2d_Useable(board.board, board.size);
+		Create_Game(board, board.size, board.AI_Open, board.user);
 		for(int j = 0; j < board.size; ++j)
 			for(int k = 0; k < board.size; ++k)
 				board.board[j][k] = input[k + j * board.size] - '0';
@@ -765,10 +746,9 @@ void Create_Game(game & board, int size, int ai, int user)
 	{
 		area.size = 0;
 		int position = 0;
-		position = sizeFromFile(input, area.size);
-		position += AIformFile(&input[position], area.AI_Open);
-		position += userFromFile(&input[position], area.user);
-		position += lastPlayedPosition(&input[position], area.coordinate);
+		position = stringParser(input, area.size);
+		position += stringParser(&input[position], area.AI_Open);
+		position += stringParser(&input[position], area.user);
 		position += Create_2d_Useable(&input[position], area);
 		return;
 	}
@@ -792,7 +772,7 @@ void Create_Game(game & board, int size, int ai, int user)
 		return;
 	}
 
-
+//
 	void Int_2d_String(const game & input, string & output)
 	{
 		output = to_string(input.size);
@@ -800,10 +780,6 @@ void Create_Game(game & board, int size, int ai, int user)
 		output += input.AI_Open + '0';
 		output += '/';
 		output += input.user + '0';
-		output += '/';
-		output += to_string(input.coordinate[0]);
-		output += ',';
-		output += to_string(input.coordinate[1]);
 		output += '/';
 		for(int i = 0; i < input.size; ++i)
 			for(int j = 0; j < input.size; ++j)
