@@ -787,10 +787,16 @@ void parseInput(const string & input, game & area)
 
 string fileInput(const string & filename, string & loaded)
 {
+	loaded[0] = 0;
 	ifstream input;
 	input.open(filename);
-	input >> loaded;
-	input.close();
+	if(input.is_open())
+	{
+		input >> loaded;
+		input.close();
+	}
+	else
+		cerr << "Error opening file." << endl;
 	return loaded;
 }
 
@@ -798,8 +804,9 @@ string fileInput(const string & filename, string & loaded)
 void Load(const string & filename, game & output)
 {
 	string input;
-	input = fileInput(filename, input);
-	parseInput(input, output);
+	fileInput(filename, input);
+	if(input[0] != 0)
+		parseInput(input, output);
 	printMap((const int **&) output.board, output.size);
 	return;
 }
