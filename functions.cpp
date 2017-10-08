@@ -3,6 +3,45 @@
 
 
 
+
+
+	void Create_2d_Array(int **& input, const int & size)
+	{
+		input = (int **)std::malloc(sizeof(int *) * size);
+		for(int i = 0; i < size; ++i)
+			input[i] = (int *)std::malloc(sizeof(int) * size);
+		return;
+	}
+
+
+	void Fill_2d_with_0(int **& array, const int & size)
+	{
+	    for(int i = 0; i < size; ++i)
+	        for(int j = 0; j < size; ++j)
+	            array[i][j] = 0;
+	    return;
+	}
+
+
+	void Create_2d_Useable(int **& input, const int & size)
+	{
+	    Create_2d_Array(input, size);
+	    Fill_2d_with_0(input, size);
+	    return;
+	}
+
+
+	void Create_Game(game & board, int size, int ai, int user)
+	{
+		Create_2d_Useable(board.board, size);
+		board.size = size;
+		board.AI_Open = ai;
+		board.user = user;
+		board.coordinate[0] = 0;
+		board.coordinate[1] = 0;
+	}
+
+
 	void printHead(const int & size)
 	{
 		char a = 'a';
@@ -61,43 +100,6 @@
 	}
 
 
-	void Create_2d_Array(int **& input, const int & size)
-	{
-		input = (int **)std::malloc(sizeof(int *) * size);
-		for(int i = 0; i < size; ++i)
-			input[i] = (int *)std::malloc(sizeof(int) * size);
-		return;
-	}
-
-
-	void Fill_2d_with_0(int **& array, const int & size)
-	{
-	    for(int i = 0; i < size; ++i)
-	        for(int j = 0; j < size; ++j)
-	            array[i][j] = 0;
-	    return;
-	}
-
-
-	void Create_2d_Useable(int **& input, const int & size)
-	{
-	    Create_2d_Array(input, size);
-	    Fill_2d_with_0(input, size);
-	    return;
-	}
-
-
-void Create_Game(game & board, int size, int ai, int user)
-{
-	Create_2d_Useable(board.board, size);
-	board.size = size;
-	board.AI_Open = ai;
-	board.user = user;
-	board.coordinate[0] = 0;
-	board.coordinate[1] = 0;
-}
-
-//
 	int CharLover(char & letter)
 	{
 		int i = 0;
@@ -109,6 +111,7 @@ void Create_Game(game & board, int size, int ai, int user)
 		return i;
 	}
 
+
 	int stringLover(string & traget)
 	{
 		int counter = 0;
@@ -116,6 +119,7 @@ void Create_Game(game & board, int size, int ai, int user)
 			counter += CharLover(traget[i]);
 		return counter;
 	}
+
 
 	int doesMultiplayer()
 	{
@@ -140,6 +144,7 @@ void Create_Game(game & board, int size, int ai, int user)
 		return input - 1;
 	}
 
+
 	int PositionY(const game & situation)
 	{
 		int i = situation.size - 1;
@@ -149,6 +154,7 @@ void Create_Game(game & board, int size, int ai, int user)
 			i = -1;
 		return i;
 	}
+
 
 void getInput(game & onTarget)
 {
@@ -191,9 +197,6 @@ void getInput(game & onTarget)
 	return;
 }
 
-
-
-//
 
 	void MakeMove(game & onTarget)
 	{
@@ -532,6 +535,12 @@ void getInput(game & onTarget)
 				default:
 					break;
 			}
+			if(PositionFound == true)
+				if(onTarget.coordinate[0] < 0 ||
+					onTarget.coordinate[1] > onTarget.size ||
+					onTarget.coordinate[1] < 0 ||
+					onTarget.coordinate[0] > onTarget.size)
+					PositionFound = false;
 			++i;
 		}
 		cout << "[" << onTarget.coordinate[0] << "," << onTarget.coordinate[1] << "]" << endl;
@@ -724,7 +733,6 @@ void getInput(game & onTarget)
 	}
 
 
-//Working File input Output functions.
 	int stringParser(const string & input, int & size, const char param)
 	{
 		int i = 0;
@@ -732,6 +740,7 @@ void getInput(game & onTarget)
 			size = size * 10 + (input[i] - '0');
 		return i + 1;
 	}
+
 
 	int Create_2d_Useable(const string & input, game & board)
 	{
@@ -741,6 +750,7 @@ void getInput(game & onTarget)
 				board.board[j][k] = input[k + j * board.size] - '0';
 		return board.size * board.size;
 	}
+
 
 	void parseInput(const string & input, game & area)
 	{
@@ -752,6 +762,7 @@ void getInput(game & onTarget)
 		position += Create_2d_Useable(&input[position], area);
 		return;
 	}
+
 
 	string fileInput(const string & filename, string & loaded)
 	{
@@ -772,7 +783,7 @@ void getInput(game & onTarget)
 		return;
 	}
 
-//
+
 	void Int_2d_String(const game & input, string & output)
 	{
 		output = to_string(input.size);
@@ -795,14 +806,11 @@ void getInput(game & onTarget)
 		Int_2d_String(input, info);
 		output << info;
 		output.close();
+		printMap((const int **&) input.board, input.size);
 	}
 
 
-
-
-
-
-void free_square(int ** array, int size)
+void free_square(int **& array, int size)
 {
 	for(int i = 0; i < size; ++i)
 		std::free(array[i]);

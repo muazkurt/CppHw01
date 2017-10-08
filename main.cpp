@@ -12,7 +12,7 @@
 int main(int argc, char * argv[])
 {
 	game board;
-	cout << "Size? ";
+	cout << "Please give size of the game: ";
 	cin >> board.size;
 	Create_Game(board, board.size, doesMultiplayer());
 	srand(time(NULL));
@@ -25,6 +25,5 @@ int main(int argc, char * argv[])
 	while(WinSituation(board) == false);
 	printMap((const int **&)board.board, board.size);
 	free_square(board.board, board.size);
-	
 	return 0;
 }

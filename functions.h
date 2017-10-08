@@ -16,7 +16,7 @@ using namespace std;
 		int size;				//	Size of the array
 		int AI_Open;			//	Does AI setted or not? If equals 0, then AI plays.
 		int user;				//	Turn counter of the player.
-		int coordinate[Y_X];
+		int coordinate[Y_X];	//	Last played position. Defaultly setted by {0,0}
 	} game;
 
 //	Map creating functions
@@ -224,5 +224,5 @@ using namespace std;
 		Takes a squre array as an (int **) and it' s size as int.
 		Frees all the memory about it.
 	*/
-	void free_square(int ** array, int size);
+	void free_square(int **& array, int size);
 
