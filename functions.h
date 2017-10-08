@@ -41,7 +41,7 @@ using namespace std;
 	/*
 	
 	*/
-	void Create_Game(game & board, int size, int ai = 0);
+	void Create_Game(game & board, int size, int ai = 0, int user = 1);
 
 //	Map printing functions
 	/*
@@ -156,7 +156,7 @@ using namespace std;
 	bool WinSituation(const game & searchOn);
 
 
-//	File operations.
+//	Load File.
 	int sizeFromFile(const string & input, int & size);
 
 	int AIformFile(const string & input, int & AI_Open);
@@ -167,13 +167,15 @@ using namespace std;
 
 	int Create_2d_Useable(const string & input, game & board);
 
-	void parseInput(const string & input, game area);
+	void parseInput(const string & input, game & area);
 
 	string fileInput(const string & filename, string & loaded);
 
-	void Int_2d_String(const game & input, string & output);
+	void Load(const string & filename, game & output);
 
-	void Load(const string & filename,  game & output);
+
+//	Save file.
+	void Int_2d_String(const game & input, string & output);
 
 	void Save(const string & filename, const game & input);
 

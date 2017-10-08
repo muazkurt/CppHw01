@@ -3,8 +3,6 @@
 
 
 
-
-//
 	void printHead(const int & size)
 	{
 		char a = 'a';
@@ -89,17 +87,17 @@
 	}
 
 
-	void Create_Game(game & board, int size, int ai)
-	{
-		Create_2d_Useable(board.board, size);
-		board.size = size;
-		board.AI_Open = ai;
-		board.user = 1;
-		board.coordinate[0] = 0;
-		board.coordinate[1] = 0;
-	}
+void Create_Game(game & board, int size, int ai, int user)
+{
+	Create_2d_Useable(board.board, size);
+	board.size = size;
+	board.AI_Open = ai;
+	board.user = user;
+	board.coordinate[0] = 0;
+	board.coordinate[1] = 0;
+}
 
-
+//
 	int CharLover(char & letter)
 	{
 		int i = 0;
@@ -196,7 +194,7 @@
 		return;
 	}
 
-//
+
 	void MakeMove(game & onTarget)
 	{
 		if(onTarget.user == 1)
@@ -215,8 +213,6 @@
 		return;
 	}
 	
-
-//
 
 	void Ai_input(game & onTarget)
 	{
@@ -547,6 +543,7 @@
 		return i;
 	}
 
+
 	int Right_Down(const game & input)
 	{
 		int i = 1;
@@ -583,6 +580,7 @@
 		return i;
 	}
 
+
 	int Left_Down(const game & input)
 	{
 		int i = 1;
@@ -600,6 +598,7 @@
 		}
 		return i;
 	}
+
 
 	int Left_Up(const game & input)
 	{
@@ -619,6 +618,7 @@
 		return i;
 	}
 
+
 	int To_Right(const game & input)
 	{
 		int i = 1;
@@ -636,6 +636,7 @@
 		}
 		return i;
 	}
+
 
 	int To_Left(const game & input)
 	{
@@ -712,9 +713,6 @@
 		return win;
 	}
 
-//
-
-
 
 //Working File input Output functions.
 	int sizeFromFile(const string & input, int & size)
@@ -763,7 +761,7 @@
 		return board.size * board.size;
 	}
 
-	void parseInput(const string & input, game area)
+	void parseInput(const string & input, game & area)
 	{
 		area.size = 0;
 		int position = 0;
@@ -784,6 +782,17 @@
 		return loaded;
 	}
 
+
+	void Load(const string & filename, game & output)
+	{
+		string input;
+		input = fileInput(filename, input);
+		parseInput(input, output);
+		printMap((const int **&) output.board, output.size);
+		return;
+	}
+
+
 	void Int_2d_String(const game & input, string & output)
 	{
 		output = to_string(input.size);
@@ -799,15 +808,6 @@
 		for(int i = 0; i < input.size; ++i)
 			for(int j = 0; j < input.size; ++j)
 				output += input.board[i][j] + '0';
-		return;
-	}
-
-	void Load(const string & filename,  game & output)
-	{
-		string input;
-		input = fileInput(filename, input);
-		parseInput(input, output);
-		printMap((const int **&) output.board, output.size);
 		return;
 	}
 
