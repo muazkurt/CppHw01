@@ -38,6 +38,9 @@ using namespace std;
 	*/
 	void Create_2d_Useable(int **& input, const int & size);
 
+	/*
+	
+	*/
 	void Create_Game(game & board, int size, int ai = 0);
 
 //	Map printing functions
@@ -108,43 +111,43 @@ using namespace std;
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much stacked from last played player and returns the size of stack.
 	*/
-	int Up_Down(int ** board, int size, const int position[Y_X]);
+	int Up_Down(game & input);
 
 	/*
-	Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
-	Checks how much Right down way stacked from last played player and returns the size of stack.
+		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
+		Checks how much Right down way stacked from last played player and returns the size of stack.
 	*/
-	int Right_Down(int ** board, int size, const int position[Y_X]);
+	int Right_Down(game & input);
 
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much Right up way stacked from last played player and returns the size of stack.
 	*/
-	int Right_Up(int ** board, int size, const int position[Y_X]);
+	int Right_Up(game & input);
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much Left-down way stacked from last played player and returns the size of stack.
 	*/
-	int Left_Down(int ** board, int size, const int position[Y_X]);
+	int Left_Down(game & input);
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much Left-up way stacked from last played player and returns the size of stack.
 	*/
-	int Left_Up(int ** board, int size, const int position[Y_X]);
+	int Left_Up(game & input);
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much right way stacked from last played player and returns the size of stack.
 	*/
-	int To_Right(int ** board, int size, const int position[Y_X]);
+	int To_Right(game & input);
 
 	/*
 		Takes 2d array as (int **), it's size, Position of last move as array sized Y_X.
 		Checks how much left way stacked from last played player and returns the size of stack.
 	*/
-	int To_Left(int ** board, int size, const int position[Y_X]);
+	int To_Left(game & input);
 	
 	/*
 		Checks if game is finish or not.

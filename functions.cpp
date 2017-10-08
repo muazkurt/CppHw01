@@ -191,7 +191,7 @@
 				Load(Input, onTarget);
 			}
 			else
-				cout << "There is no such command" << endl;
+				cout << "There is no such command" << endl; 
 		} while(onTarget.coordinate[1] == -1);
 		return;
 	}
@@ -199,18 +199,19 @@
 //
 	void MakeMove(game & onTarget)
 	{
-		/*if(onTarget.user == 1)
+		if(onTarget.user == 1)
 		{	
 			getInput(onTarget);
+			onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = onTarget.user;
 		}
 		else
 		{
 			//if(onTarget.AI_Open == 0);
 			//	Ai_input(onTarget.board, onTarget.size, onTarget.coordinate);
 			//else
-		}*/
-		getInput(onTarget);
-		onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = onTarget.user;
+				getInput(onTarget);
+			onTarget.board[onTarget.coordinate[0]][onTarget.coordinate[1]] = 2;
+		}
 		return;
 	}
 	
